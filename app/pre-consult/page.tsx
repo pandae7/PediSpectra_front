@@ -276,7 +276,7 @@ export default function PreConsultPage() {
           size="lg"
           className="h-12 text-[15px]"
           disabled={!preConsultReady}
-          onClick={() => router.push('/home')}
+          onClick={() => router.push('/consultations')}
         >
           Save handoff
           <ArrowRight className="size-4" />
