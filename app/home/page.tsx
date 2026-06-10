@@ -116,8 +116,9 @@ export default function HomePage() {
             Answer quick questions about symptoms, duration, language, and urgency. PediSpectra will
             recommend a subspeciality and available doctors.
           </p>
-          <Button className="mt-4 h-11 w-full" disabled>
-            Start assistant soon
+          <Button className="mt-4 h-11 w-full" onClick={() => router.push('/assistant')}>
+            Start assistant
+            <ArrowRight className="size-4" />
           </Button>
         </section>
 

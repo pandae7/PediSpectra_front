@@ -63,6 +63,38 @@ export type ParentProfile = {
   city: string
 }
 
+export type BookedSlot = {
+  doctorId: string
+  slotId: string
+  speciality: string
+}
+
+export type PreConsultHandoff = {
+  conditionUpdate: string
+  temperature: string
+  weightKg: string
+  heightCm: string
+  medicinesGiven: string
+  allergies: string
+  previousConditions: string
+  parentNote: string
+  selectedDocuments: string[]
+  consentToShare: boolean
+}
+
+const EMPTY_PRE_CONSULT: PreConsultHandoff = {
+  conditionUpdate: '',
+  temperature: '',
+  weightKg: '',
+  heightCm: '',
+  medicinesGiven: '',
+  allergies: '',
+  previousConditions: '',
+  parentNote: '',
+  selectedDocuments: [],
+  consentToShare: false,
+}
+
 const EMPTY_INTAKE: ChildIntake = {
   childName: '',
   ageValue: '',
@@ -114,6 +146,15 @@ type ConsultState = {
   setSelectedChildId: (id: string) => void
   normalProfileComplete: boolean
 
+  // scheduled consult
+  recommendedSpeciality: string | null
+  setRecommendedSpeciality: (speciality: string | null) => void
+  bookedSlot: BookedSlot | null
+  setBookedSlot: (slot: BookedSlot | null) => void
+  preConsultHandoff: PreConsultHandoff
+  updatePreConsultHandoff: (patch: Partial<PreConsultHandoff>) => void
+  preConsultReady: boolean
+
   // payment / matching
   planId: string | null
   setPlanId: (id: string) => void
@@ -144,6 +185,9 @@ export function ConsultProvider({ children }: { children: ReactNode }) {
   const [parentProfile, setParentProfile] = useState<ParentProfile>(EMPTY_PARENT_PROFILE)
   const [childProfiles, setChildProfiles] = useState<ChildProfile[]>([])
   const [selectedChildId, setSelectedChildId] = useState<string | null>(null)
+  const [recommendedSpeciality, setRecommendedSpeciality] = useState<string | null>(null)
+  const [bookedSlot, setBookedSlot] = useState<BookedSlot | null>(null)
+  const [preConsultHandoff, setPreConsultHandoff] = useState<PreConsultHandoff>(EMPTY_PRE_CONSULT)
   const [planId, setPlanId] = useState<string | null>(null)
   const [paid, setPaid] = useState(false)
   const [matchedDoctor, setMatchedDoctor] = useState<Doctor | null>(null)
@@ -176,6 +220,11 @@ export function ConsultProvider({ children }: { children: ReactNode }) {
   )
   const completePayment = useCallback(() => setPaid(true), [])
   const endConsult = useCallback(() => setConsultEndedAt(Date.now()), [])
+  const updatePreConsultHandoff = useCallback(
+    (patch: Partial<PreConsultHandoff>) =>
+      setPreConsultHandoff((prev) => ({ ...prev, ...patch })),
+    [],
+  )
 
   const normalProfileComplete = useMemo(
     () =>
@@ -189,6 +238,13 @@ export function ConsultProvider({ children }: { children: ReactNode }) {
     [parentProfile.name, childProfiles],
   )
 
+  const preConsultReady = useMemo(
+    () =>
+      preConsultHandoff.conditionUpdate.trim().length > 0 &&
+      preConsultHandoff.consentToShare,
+    [preConsultHandoff.conditionUpdate, preConsultHandoff.consentToShare],
+  )
+
   const reset = useCallback(() => {
     setFlowMode('urgent')
     setLanguage(null)
@@ -200,6 +256,9 @@ export function ConsultProvider({ children }: { children: ReactNode }) {
     setParentProfile(EMPTY_PARENT_PROFILE)
     setChildProfiles([])
     setSelectedChildId(null)
+    setRecommendedSpeciality(null)
+    setBookedSlot(null)
+    setPreConsultHandoff(EMPTY_PRE_CONSULT)
     setPlanId(null)
     setPaid(false)
     setMatchedDoctor(null)
@@ -240,6 +299,13 @@ export function ConsultProvider({ children }: { children: ReactNode }) {
     selectedChildId,
     setSelectedChildId,
     normalProfileComplete,
+    recommendedSpeciality,
+    setRecommendedSpeciality,
+    bookedSlot,
+    setBookedSlot,
+    preConsultHandoff,
+    updatePreConsultHandoff,
+    preConsultReady,
     planId,
     setPlanId,
     paid,
