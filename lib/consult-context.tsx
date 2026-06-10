@@ -45,6 +45,24 @@ export type ChildIntake = {
   temperature: string
 }
 
+export type FlowMode = 'urgent' | 'normal'
+
+export type LanguageCode = 'en' | 'hi' | 'te'
+
+export type ChildProfile = {
+  id: string
+  name: string
+  ageValue: string
+  ageUnit: 'years' | 'months'
+  sex: string
+}
+
+export type ParentProfile = {
+  name: string
+  email: string
+  city: string
+}
+
 const EMPTY_INTAKE: ChildIntake = {
   childName: '',
   ageValue: '',
@@ -57,7 +75,19 @@ const EMPTY_INTAKE: ChildIntake = {
   temperature: '',
 }
 
+const EMPTY_PARENT_PROFILE: ParentProfile = {
+  name: '',
+  email: '',
+  city: '',
+}
+
 type ConsultState = {
+  // entry flow
+  flowMode: FlowMode
+  setFlowMode: (mode: FlowMode) => void
+  language: LanguageCode | null
+  setLanguage: (language: LanguageCode) => void
+
   // safety triage
   safetyChecked: boolean
   redFlagsSelected: string[]
@@ -74,6 +104,15 @@ type ConsultState = {
   setPhone: (phone: string) => void
   loggedIn: boolean
   verifyOtp: () => void
+
+  // parent / child profiles for normal flow
+  parentProfile: ParentProfile
+  updateParentProfile: (patch: Partial<ParentProfile>) => void
+  childProfiles: ChildProfile[]
+  setChildProfiles: (children: ChildProfile[]) => void
+  selectedChildId: string | null
+  setSelectedChildId: (id: string) => void
+  normalProfileComplete: boolean
 
   // payment / matching
   planId: string | null
@@ -95,11 +134,16 @@ type ConsultState = {
 const ConsultContext = createContext<ConsultState | null>(null)
 
 export function ConsultProvider({ children }: { children: ReactNode }) {
+  const [flowMode, setFlowMode] = useState<FlowMode>('urgent')
+  const [language, setLanguage] = useState<LanguageCode | null>(null)
   const [safetyChecked, setSafetyChecked] = useState(false)
   const [redFlagsSelected, setRedFlagsSelected] = useState<string[]>([])
   const [intake, setIntake] = useState<ChildIntake>(EMPTY_INTAKE)
   const [phone, setPhone] = useState('')
   const [loggedIn, setLoggedIn] = useState(false)
+  const [parentProfile, setParentProfile] = useState<ParentProfile>(EMPTY_PARENT_PROFILE)
+  const [childProfiles, setChildProfiles] = useState<ChildProfile[]>([])
+  const [selectedChildId, setSelectedChildId] = useState<string | null>(null)
   const [planId, setPlanId] = useState<string | null>(null)
   const [paid, setPaid] = useState(false)
   const [matchedDoctor, setMatchedDoctor] = useState<Doctor | null>(null)
@@ -126,15 +170,36 @@ export function ConsultProvider({ children }: { children: ReactNode }) {
   )
 
   const verifyOtp = useCallback(() => setLoggedIn(true), [])
+  const updateParentProfile = useCallback(
+    (patch: Partial<ParentProfile>) => setParentProfile((prev) => ({ ...prev, ...patch })),
+    [],
+  )
   const completePayment = useCallback(() => setPaid(true), [])
   const endConsult = useCallback(() => setConsultEndedAt(Date.now()), [])
 
+  const normalProfileComplete = useMemo(
+    () =>
+      parentProfile.name.trim().length > 0 &&
+      childProfiles.some(
+        (child) =>
+          child.name.trim().length > 0 &&
+          child.ageValue.trim().length > 0 &&
+          child.sex.trim().length > 0,
+      ),
+    [parentProfile.name, childProfiles],
+  )
+
   const reset = useCallback(() => {
+    setFlowMode('urgent')
+    setLanguage(null)
     setSafetyChecked(false)
     setRedFlagsSelected([])
     setIntake(EMPTY_INTAKE)
     setPhone('')
     setLoggedIn(false)
+    setParentProfile(EMPTY_PARENT_PROFILE)
+    setChildProfiles([])
+    setSelectedChildId(null)
     setPlanId(null)
     setPaid(false)
     setMatchedDoctor(null)
@@ -153,6 +218,10 @@ export function ConsultProvider({ children }: { children: ReactNode }) {
   }, [safetyChecked, intakeComplete, loggedIn, paid, consultEndedAt])
 
   const value: ConsultState = {
+    flowMode,
+    setFlowMode,
+    language,
+    setLanguage,
     safetyChecked,
     redFlagsSelected,
     setRedFlags,
@@ -164,6 +233,13 @@ export function ConsultProvider({ children }: { children: ReactNode }) {
     setPhone,
     loggedIn,
     verifyOtp,
+    parentProfile,
+    updateParentProfile,
+    childProfiles,
+    setChildProfiles,
+    selectedChildId,
+    setSelectedChildId,
+    normalProfileComplete,
     planId,
     setPlanId,
     paid,

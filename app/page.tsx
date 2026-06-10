@@ -26,7 +26,7 @@ export default function LandingPage() {
             <Stethoscope className="size-4" />
           </div>
           <div className="leading-tight">
-            <p className="text-sm font-semibold text-foreground">PediCare 24/7</p>
+            <p className="text-sm font-semibold text-foreground">PediSpectra</p>
             <p className="text-[11px] text-muted-foreground">Pediatric urgent care</p>
           </div>
         </div>
@@ -52,7 +52,7 @@ export default function LandingPage() {
         {/* Reassurance row */}
         <ul className="grid grid-cols-1 gap-2.5">
           {[
-            { icon: ShieldCheck, text: 'Verified pediatricians, available 24/7' },
+            { icon: ShieldCheck, text: 'Verified pediatricians, available when you need them' },
             { icon: Stethoscope, text: 'Video consult with prescription if needed' },
             { icon: Clock, text: 'No appointment — connect in minutes' },
           ].map(({ icon: Icon, text }) => (

@@ -204,7 +204,7 @@ export default function SummaryPage() {
         </button>
       </main>
 
-      <ActionBar hint="Your summary is saved to your PediCare account.">
+      <ActionBar hint="Your summary is saved to your PediSpectra account.">
         <Button size="lg" className="h-12 text-[15px]" onClick={() => router.push('/')}>
           Done
         </Button>
