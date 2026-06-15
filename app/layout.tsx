@@ -11,15 +11,15 @@ const geistMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Need help for your child now? — PediCare 24/7',
+  title: 'Need help for your child now? - PediSpectra',
   description:
-    'Start with a quick safety check. If online consultation is appropriate, we connect you to a pediatric doctor.',
+    'Start with a quick safety check. If online consultation is appropriate, PediSpectra connects you to a pediatric doctor.',
   generator: 'v0.app',
   openGraph: {
-    title: 'Need help for your child now?',
+    title: 'Need help for your child now? - PediSpectra',
     description:
-      'Quick safety check, then a pediatric doctor in minutes. Available 24/7.',
-    siteName: 'PediCare 24/7',
+      'Quick safety check, then a pediatric doctor in minutes through PediSpectra.',
+    siteName: 'PediSpectra',
     type: 'website',
   },
   icons: {

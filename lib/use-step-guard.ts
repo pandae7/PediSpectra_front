@@ -16,12 +16,12 @@ import {
  */
 export function useStepGuard(step: FlowStep): boolean {
   const router = useRouter()
-  const { highestUnlockedStep } = useConsult()
+  const { flowMode, highestUnlockedStep } = useConsult()
 
   const unlocked = highestUnlockedStep()
   const unlockedIndex = FLOW_STEPS.indexOf(unlocked)
   const stepIndex = FLOW_STEPS.indexOf(step)
-  const allowed = stepIndex <= unlockedIndex
+  const allowed = flowMode === 'normal' && step === 'login' ? true : stepIndex <= unlockedIndex
 
   useEffect(() => {
     if (!allowed) {

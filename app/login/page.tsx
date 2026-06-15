@@ -15,7 +15,7 @@ import { useStepGuard } from '@/lib/use-step-guard'
 export default function LoginPage() {
   const allowed = useStepGuard('login')
   const router = useRouter()
-  const { phone, setPhone, verifyOtp } = useConsult()
+  const { flowMode, phone, setPhone, verifyOtp } = useConsult()
   const [stage, setStage] = useState<'phone' | 'otp'>('phone')
   const [otp, setOtp] = useState('')
 
@@ -31,7 +31,7 @@ export default function LoginPage() {
   const confirm = () => {
     if (otpValid) {
       verifyOtp()
-      router.push('/payment')
+      router.push(flowMode === 'normal' ? '/profile' : '/payment')
     }
   }
 
@@ -39,9 +39,18 @@ export default function LoginPage() {
     <PhoneFrame>
       <FlowHeader
         title={stage === 'phone' ? 'Verify your number' : 'Enter the code'}
-        subtitle="Step 3 of 6 · Secure your consult record"
+        subtitle={
+          flowMode === 'normal'
+            ? 'Secure your PediSpectra profile'
+            : 'Step 3 of 6 - Secure your consult record'
+        }
         currentStep="login"
-        onBack={() => (stage === 'otp' ? setStage('phone') : router.push('/intake'))}
+        onBack={() =>
+          stage === 'otp'
+            ? setStage('phone')
+            : router.push(flowMode === 'normal' ? '/intro' : '/intake')
+        }
+        showProgress={flowMode !== 'normal'}
       />
 
       <main className="flex flex-1 flex-col gap-6 px-5 py-7">
