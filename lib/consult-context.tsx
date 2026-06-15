@@ -47,7 +47,7 @@ export type ChildIntake = {
 
 export type FlowMode = 'urgent' | 'normal'
 
-export type LanguageCode = 'en' | 'hi' | 'te'
+export type LanguageCode = 'en' | 'hi' | 'te' | 'kn'
 
 export type ChildProfile = {
   id: string

@@ -11,8 +11,9 @@ import { cn } from '@/lib/utils'
 
 const LANGUAGES: { code: LanguageCode; label: string; helper: string }[] = [
   { code: 'en', label: 'English', helper: 'Continue in English' },
-  { code: 'hi', label: 'Hindi', helper: 'Hindi text for demo later' },
-  { code: 'te', label: 'Telugu', helper: 'Telugu text for demo later' },
+  { code: 'hi', label: 'हिन्दी', helper: 'हिन्दी में जारी रखें' },
+  { code: 'te', label: 'తెలుగు', helper: 'తెలుగులో కొనసాగించండి' },
+  { code: 'kn', label: 'ಕನ್ನಡ', helper: 'ಕನ್ನಡದಲ್ಲಿ ಮುಂದುವರಿಸಿ' },
 ]
 
 export default function InvitePage() {
