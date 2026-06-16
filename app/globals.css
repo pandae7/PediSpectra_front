@@ -1,0 +1,108 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --font-sans: var(--font-geist-sans), 'Geist Fallback', system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), 'Geist Mono Fallback', monospace;
+
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-background: var(--background);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+}
+
+/* ========== DARK THEME (default) ========== */
+:root {
+  --background: #0a0f0d;
+  --foreground: #e8f0ec;
+
+  --card: #121a16;
+  --card-foreground: #e8f0ec;
+
+  --popover: #121a16;
+  --popover-foreground: #e8f0ec;
+
+  --primary: #34d399;
+  --primary-foreground: #022c1e;
+
+  --secondary: #1a2b23;
+  --secondary-foreground: #e8f0ec;
+
+  --muted: #1a2b23;
+  --muted-foreground: #7c9a8a;
+
+  --accent: #1a2b23;
+  --accent-foreground: #e8f0ec;
+
+  --destructive: #ef4444;
+
+  --border: #243d31;
+  --input: #243d31;
+  --ring: #34d399;
+
+  --radius: 0.75rem;
+}
+
+/* ========== LIGHT THEME ========== */
+.light {
+  --background: #f8fdf9;
+  --foreground: #0a1f14;
+
+  --card: #ffffff;
+  --card-foreground: #0a1f14;
+
+  --popover: #ffffff;
+  --popover-foreground: #0a1f14;
+
+  --primary: #059669;
+  --primary-foreground: #ffffff;
+
+  --secondary: #ecfdf5;
+  --secondary-foreground: #0a1f14;
+
+  --muted: #f0fdf4;
+  --muted-foreground: #4b7c62;
+
+  --accent: #ecfdf5;
+  --accent-foreground: #0a1f14;
+
+  --destructive: #dc2626;
+
+  --border: #d1e7dd;
+  --input: #d1e7dd;
+  --ring: #059669;
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans scroll-smooth;
+  }
+}
