@@ -19,7 +19,7 @@ export default function DoctorConsultRoomPage() {
   const router = useRouter()
   const params = useParams()
   const consultId = params.consultId as string
-  const { currentDoctor, consultations, completeConsultation } = useDoctor()
+  const { currentDoctor, consultations, completeConsultation, isLoading } = useDoctor()
 
   const [micOn, setMicOn] = useState(true)
   const [cameraOn, setCameraOn] = useState(true)
@@ -33,8 +33,8 @@ export default function DoctorConsultRoomPage() {
   const consult = consultations.find((c) => c.id === consultId)
 
   useEffect(() => {
-    if (!currentDoctor) router.push('/login/doctor')
-  }, [currentDoctor, router])
+    if (!isLoading && !currentDoctor) router.push('/login/doctor')
+  }, [currentDoctor, isLoading, router])
 
   // Timer
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function DoctorConsultRoomPage() {
     return () => clearInterval(interval)
   }, [])
 
-  if (!currentDoctor || !consult) return null
+  if (isLoading || !currentDoctor || !consult) return null
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60)

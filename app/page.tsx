@@ -9,6 +9,7 @@ import {
   Eye,
   Heart,
   HeartPulse,
+  MapPin,
   Microscope,
   Pill,
   Search,
@@ -216,15 +217,35 @@ export default function LandingPage() {
 
           {/* Search bar */}
           <div className="mx-auto mt-8 max-w-xl">
-            <div className="relative">
-              <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by subspeciality, doctor, or symptoms..."
-                className="h-12 w-full rounded-xl border border-border bg-card pl-12 pr-4 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-              />
+            <div className="flex gap-2">
+              {/* Location dropdown */}
+              <div className="flex items-center gap-1 rounded-xl border border-border bg-card px-3">
+                <MapPin className="h-4 w-4 text-primary" />
+                <select className="h-12 bg-transparent text-sm text-foreground focus:outline-none">
+                  <option>All Locations</option>
+                  <option>Bangalore</option>
+                  <option>Chennai</option>
+                  <option>Hyderabad</option>
+                  <option>Mumbai</option>
+                  <option>Delhi</option>
+                  <option>Mysuru</option>
+                  <option>Hubli</option>
+                  <option>Mangaluru</option>
+                  <option>Pune</option>
+                  <option>Kolkata</option>
+                </select>
+              </div>
+              {/* Search input */}
+              <div className="relative flex-1">
+                <Search className="absolute left-4 top-1/2 h-5 w-5 -translate-y-1/2 text-muted-foreground" />
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  placeholder="Search doctor, subspeciality, hospital, or describe symptoms..."
+                  className="h-12 w-full rounded-xl border border-border bg-card pl-12 pr-4 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
             </div>
             {searchQuery.trim().length > 0 && (
               <p className="mt-2 text-sm text-muted-foreground">
@@ -238,8 +259,9 @@ export default function LandingPage() {
             {filteredSpecialities.map((spec) => {
               const Icon = spec.icon
               return (
-                <div
+                <a
                   key={spec.name}
+                  href={`/doctors?subspeciality=${encodeURIComponent(spec.name)}`}
                   className="group cursor-pointer rounded-xl border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5"
                 >
                   <div className="flex items-start gap-3">
@@ -253,7 +275,7 @@ export default function LandingPage() {
                       </p>
                     </div>
                   </div>
-                </div>
+                </a>
               )
             })}
           </div>

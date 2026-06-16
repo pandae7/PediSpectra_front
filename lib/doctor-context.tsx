@@ -14,6 +14,7 @@ import {
 interface DoctorContextValue {
   // Current logged-in doctor
   currentDoctor: DoctorProfile | null
+  isLoading: boolean
   setCurrentDoctor: (doctor: DoctorProfile) => void
   logout: () => void
 
@@ -34,6 +35,7 @@ const DoctorContext = createContext<DoctorContextValue | null>(null)
 
 export function DoctorProvider({ children }: { children: ReactNode }) {
   const [currentDoctor, setCurrentDoctorState] = useState<DoctorProfile | null>(null)
+  const [isLoading, setIsLoading] = useState(true)
   const [doctors, setDoctors] = useState<DoctorProfile[]>([])
   const [consultations, setConsultations] = useState<Consultation[]>([])
 
@@ -42,28 +44,29 @@ export function DoctorProvider({ children }: { children: ReactNode }) {
     setDoctors(getDoctors())
     setConsultations(getConsultations())
 
-    // Restore logged-in doctor from session
+    // Restore logged-in doctor from localStorage
     try {
-      const savedId = sessionStorage.getItem('pedispectra-current-doctor')
+      const savedId = localStorage.getItem('pedispectra-current-doctor')
       if (savedId) {
         const docs = getDoctors()
         const doc = docs.find((d) => d.id === savedId)
         if (doc) setCurrentDoctorState(doc)
       }
     } catch {}
+    setIsLoading(false)
   }, [])
 
   const setCurrentDoctor = (doctor: DoctorProfile) => {
     setCurrentDoctorState(doctor)
     try {
-      sessionStorage.setItem('pedispectra-current-doctor', doctor.id)
+      localStorage.setItem('pedispectra-current-doctor', doctor.id)
     } catch {}
   }
 
   const logout = () => {
     setCurrentDoctorState(null)
     try {
-      sessionStorage.removeItem('pedispectra-current-doctor')
+      localStorage.removeItem('pedispectra-current-doctor')
     } catch {}
   }
 
@@ -119,6 +122,7 @@ export function DoctorProvider({ children }: { children: ReactNode }) {
     <DoctorContext.Provider
       value={{
         currentDoctor,
+        isLoading,
         setCurrentDoctor,
         logout,
         doctors,

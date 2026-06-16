@@ -23,12 +23,12 @@ const TIME_SLOTS = generateTimeSlots()
 
 export default function DoctorAvailabilityPage() {
   const router = useRouter()
-  const { currentDoctor } = useDoctor()
+  const { currentDoctor, isLoading } = useDoctor()
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [saved, setSaved] = useState(false)
 
   useEffect(() => {
-    if (!currentDoctor) {
+    if (!isLoading && !currentDoctor) {
       router.push('/login/doctor')
       return
     }
@@ -43,9 +43,9 @@ export default function DoctorAvailabilityPage() {
         setSelected(new Set(initial))
       }
     } catch {}
-  }, [currentDoctor, router])
+  }, [currentDoctor, isLoading, router])
 
-  if (!currentDoctor) return null
+  if (isLoading || !currentDoctor) return null
 
   const toggleSlot = (day: string, time: string) => {
     const key = `${day}-${time}`

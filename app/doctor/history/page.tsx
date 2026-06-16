@@ -7,13 +7,13 @@ import { useDoctor } from '@/lib/doctor-context'
 
 export default function DoctorHistoryPage() {
   const router = useRouter()
-  const { currentDoctor, getCompleted } = useDoctor()
+  const { currentDoctor, getCompleted, isLoading } = useDoctor()
 
   useEffect(() => {
-    if (!currentDoctor) router.push('/login/doctor')
-  }, [currentDoctor, router])
+    if (!isLoading && !currentDoctor) router.push('/login/doctor')
+  }, [currentDoctor, isLoading, router])
 
-  if (!currentDoctor) return null
+  if (isLoading || !currentDoctor) return null
 
   const completed = getCompleted()
 

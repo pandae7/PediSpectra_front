@@ -16,15 +16,15 @@ import { ThemeSelector } from '@/components/ui/theme-selector'
 
 export default function DoctorDashboardPage() {
   const router = useRouter()
-  const { currentDoctor, logout, getUpcoming, getCompleted } = useDoctor()
+  const { currentDoctor, logout, getUpcoming, getCompleted, isLoading } = useDoctor()
 
   useEffect(() => {
-    if (!currentDoctor) {
+    if (!isLoading && !currentDoctor) {
       router.push('/login/doctor')
     }
-  }, [currentDoctor, router])
+  }, [currentDoctor, isLoading, router])
 
-  if (!currentDoctor) return null
+  if (isLoading || !currentDoctor) return null
 
   const upcoming = getUpcoming()
   const completed = getCompleted()

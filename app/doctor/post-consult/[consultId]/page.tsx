@@ -9,7 +9,7 @@ export default function DoctorPostConsultPage() {
   const router = useRouter()
   const params = useParams()
   const consultId = params.consultId as string
-  const { currentDoctor, consultations, completeConsultation } = useDoctor()
+  const { currentDoctor, consultations, completeConsultation, isLoading } = useDoctor()
 
   const [remarks, setRemarks] = useState('')
   const [fileName, setFileName] = useState('')
@@ -18,10 +18,10 @@ export default function DoctorPostConsultPage() {
   const consult = consultations.find((c) => c.id === consultId)
 
   useEffect(() => {
-    if (!currentDoctor) router.push('/login/doctor')
-  }, [currentDoctor, router])
+    if (!isLoading && !currentDoctor) router.push('/login/doctor')
+  }, [currentDoctor, isLoading, router])
 
-  if (!currentDoctor) return null
+  if (isLoading || !currentDoctor) return null
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]

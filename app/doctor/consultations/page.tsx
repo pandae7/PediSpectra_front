@@ -7,17 +7,17 @@ import { useDoctor } from '@/lib/doctor-context'
 
 export default function DoctorConsultationsPage() {
   const router = useRouter()
-  const { currentDoctor, getUpcoming, reschedule, cancelConsultation } = useDoctor()
+  const { currentDoctor, getUpcoming, reschedule, cancelConsultation, isLoading } = useDoctor()
   const [showCancel, setShowCancel] = useState<string | null>(null)
   const [showReschedule, setShowReschedule] = useState<string | null>(null)
   const [newDate, setNewDate] = useState('')
   const [newTime, setNewTime] = useState('')
 
   useEffect(() => {
-    if (!currentDoctor) router.push('/login/doctor')
-  }, [currentDoctor, router])
+    if (!isLoading && !currentDoctor) router.push('/login/doctor')
+  }, [currentDoctor, isLoading, router])
 
-  if (!currentDoctor) return null
+  if (isLoading || !currentDoctor) return null
 
   const upcoming = getUpcoming()
 
