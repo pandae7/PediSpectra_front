@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
+import { ThemeProvider } from '@/lib/theme-context'
 import './globals.css'
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
@@ -15,18 +16,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`${geistSans.variable} ${geistMono.variable}`} suppressHydrationWarning>
       <head>
-        {/* Theme flash prevention: apply saved theme before paint */}
+        {/* Theme flash prevention: apply saved theme class before paint */}
         <script
           dangerouslySetInnerHTML={{
             __html: `
               (function() {
                 try {
-                  var theme = localStorage.getItem('pedispectra-theme');
-                  if (theme === 'light') {
-                    document.documentElement.classList.add('light');
-                  } else if (!theme) {
-                    var prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-                    if (!prefersDark) document.documentElement.classList.add('light');
+                  var themeId = localStorage.getItem('pedispectra-theme');
+                  var classMap = { 'light-sage': 'light-sage', 'earthy-warm': 'earthy-warm' };
+                  if (themeId && classMap[themeId]) {
+                    document.documentElement.classList.add(classMap[themeId]);
                   }
                 } catch(e) {}
               })();
@@ -35,7 +34,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         />
       </head>
       <body className="font-sans antialiased bg-background text-foreground">
-        {children}
+        <ThemeProvider>
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )

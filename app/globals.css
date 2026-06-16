@@ -33,7 +33,10 @@
   --radius-2xl: calc(var(--radius) * 1.8);
 }
 
-/* ========== DARK THEME (default) ========== */
+/* ==========================================================
+   THEME: Dark Teal (default — :root)
+   Deep dark with vibrant teal/emerald accents
+   ========================================================== */
 :root {
   --background: #0a0f0d;
   --foreground: #e8f0ec;
@@ -44,8 +47,8 @@
   --popover: #121a16;
   --popover-foreground: #e8f0ec;
 
-  --primary: #34d399;
-  --primary-foreground: #022c1e;
+  --primary: #2dd4bf;
+  --primary-foreground: #042f2e;
 
   --secondary: #1a2b23;
   --secondary-foreground: #e8f0ec;
@@ -60,39 +63,75 @@
 
   --border: #243d31;
   --input: #243d31;
-  --ring: #34d399;
+  --ring: #2dd4bf;
 
   --radius: 0.75rem;
 }
 
-/* ========== LIGHT THEME ========== */
-.light {
-  --background: #f8fdf9;
-  --foreground: #0a1f14;
+/* ==========================================================
+   THEME: Light Sage
+   Clean white/cream backgrounds with soft sage teal accents
+   ========================================================== */
+.light-sage {
+  --background: #f8fdfb;
+  --foreground: #0f2b20;
 
   --card: #ffffff;
-  --card-foreground: #0a1f14;
+  --card-foreground: #0f2b20;
 
   --popover: #ffffff;
-  --popover-foreground: #0a1f14;
+  --popover-foreground: #0f2b20;
 
-  --primary: #059669;
+  --primary: #0d9488;
   --primary-foreground: #ffffff;
 
-  --secondary: #ecfdf5;
-  --secondary-foreground: #0a1f14;
+  --secondary: #f0fdfa;
+  --secondary-foreground: #0f2b20;
 
-  --muted: #f0fdf4;
-  --muted-foreground: #4b7c62;
+  --muted: #f0fdfa;
+  --muted-foreground: #4a7c6f;
 
-  --accent: #ecfdf5;
-  --accent-foreground: #0a1f14;
+  --accent: #f0fdfa;
+  --accent-foreground: #0f2b20;
 
   --destructive: #dc2626;
 
-  --border: #d1e7dd;
-  --input: #d1e7dd;
-  --ring: #059669;
+  --border: #cce8e0;
+  --input: #cce8e0;
+  --ring: #0d9488;
+}
+
+/* ==========================================================
+   THEME: Earthy Warm
+   Warm beige/sand backgrounds with deep teal + terracotta
+   ========================================================== */
+.earthy-warm {
+  --background: #faf7f2;
+  --foreground: #2c1810;
+
+  --card: #fefcf8;
+  --card-foreground: #2c1810;
+
+  --popover: #fefcf8;
+  --popover-foreground: #2c1810;
+
+  --primary: #1a7a6e;
+  --primary-foreground: #ffffff;
+
+  --secondary: #f5ede3;
+  --secondary-foreground: #2c1810;
+
+  --muted: #f0e8dc;
+  --muted-foreground: #6b5c4f;
+
+  --accent: #f5ede3;
+  --accent-foreground: #2c1810;
+
+  --destructive: #c53030;
+
+  --border: #e2d6c8;
+  --input: #e2d6c8;
+  --ring: #1a7a6e;
 }
 
 @layer base {

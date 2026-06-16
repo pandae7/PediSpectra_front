@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import {
   Activity,
   Baby,
@@ -10,17 +10,16 @@ import {
   Heart,
   HeartPulse,
   Microscope,
-  Moon,
   Pill,
   Search,
   Shield,
   Stethoscope,
-  Sun,
   Syringe,
   Users,
   Video,
   Zap,
 } from 'lucide-react'
+import { ThemeSelector } from '@/components/ui/theme-selector'
 
 const SUBSPECIALITIES = [
   { name: 'Cardiology', description: 'Heart defects, murmurs, arrhythmias, and cardiac conditions in children', icon: Heart },
@@ -44,29 +43,7 @@ const SUBSPECIALITIES = [
 ]
 
 export default function LandingPage() {
-  const [theme, setTheme] = useState<'dark' | 'light'>('dark')
   const [searchQuery, setSearchQuery] = useState('')
-
-  useEffect(() => {
-    const saved = localStorage.getItem('pedispectra-theme')
-    if (saved === 'light') {
-      setTheme('light')
-    } else if (!saved) {
-      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
-      setTheme(prefersDark ? 'dark' : 'light')
-    }
-  }, [])
-
-  const toggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark'
-    setTheme(newTheme)
-    localStorage.setItem('pedispectra-theme', newTheme)
-    if (newTheme === 'light') {
-      document.documentElement.classList.add('light')
-    } else {
-      document.documentElement.classList.remove('light')
-    }
-  }
 
   const filteredSpecialities = searchQuery.trim().length > 0
     ? SUBSPECIALITIES.filter(
@@ -111,25 +88,13 @@ export default function LandingPage() {
             >
               Join as Doctor
             </a>
-            {/* Theme toggle */}
-            <button
-              onClick={toggleTheme}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground transition-colors hover:text-foreground"
-              aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </button>
+            {/* Theme dropdown */}
+            <ThemeSelector />
           </div>
 
           {/* Mobile nav */}
           <div className="flex items-center gap-2 md:hidden">
-            <button
-              onClick={toggleTheme}
-              className="flex h-9 w-9 items-center justify-center rounded-lg border border-border text-muted-foreground"
-              aria-label="Toggle theme"
-            >
-              {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-            </button>
+            <ThemeSelector />
             <a
               href="/login/patient"
               className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
