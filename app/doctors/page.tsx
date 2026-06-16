@@ -1,13 +1,13 @@
 'use client'
 
-import { useState, useEffect } from 'react'
+import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ArrowLeft, MapPin, Star, Stethoscope } from 'lucide-react'
 import { getDoctors, initializeMockData, type DoctorProfile } from '@/lib/mock-data'
 
 const CITIES = ['All Locations', 'Bangalore', 'Chennai', 'Hyderabad', 'Mumbai', 'Delhi', 'Mysuru', 'Hubli', 'Mangaluru', 'Pune', 'Kolkata']
 
-export default function DoctorsListPage() {
+function DoctorsListContent() {
   const searchParams = useSearchParams()
   const subspecialityParam = searchParams.get('subspeciality') || ''
 
@@ -117,5 +117,13 @@ export default function DoctorsListPage() {
         )}
       </div>
     </div>
+  )
+}
+
+export default function DoctorsListPage() {
+  return (
+    <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-background"><p className="text-muted-foreground">Loading...</p></div>}>
+      <DoctorsListContent />
+    </Suspense>
   )
 }
