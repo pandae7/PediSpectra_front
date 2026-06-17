@@ -195,47 +195,43 @@ export default function DoctorConsultRoomPage() {
         {/* LEFT: Video / Whiteboard (60%) */}
         <div className="flex w-[60%] flex-col border-r border-border">
           <div className="relative flex-1 bg-muted/10">
-            {activePanel === 'whiteboard' ? (
-              <Whiteboard />
-            ) : (
-              <>
-                {/* Video area — Daily.co embed or fallback */}
-                {videoLoading ? (
-                  <div className="flex h-full items-center justify-center">
-                    <div className="text-center">
-                      <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
-                      <p className="mt-3 text-sm text-muted-foreground">Connecting to video room...</p>
-                    </div>
+            {/* Video area — always visible */}
+            <div className="h-full w-full">
+              {videoLoading ? (
+                <div className="flex h-full items-center justify-center">
+                  <div className="text-center">
+                    <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                    <p className="mt-3 text-sm text-muted-foreground">Connecting to video room...</p>
                   </div>
-                ) : roomUrl ? (
-                  <iframe
-                    src={`${roomUrl}?t=${encodeURIComponent(currentDoctor.name)}&showLeaveButton=false&showFullscreenButton=true`}
-                    allow="camera; microphone; fullscreen; display-capture"
-                    className="h-full w-full border-0"
-                    title="Video consultation"
-                  />
-                ) : (
-                  <div className="flex h-full items-center justify-center">
-                    <div className="text-center max-w-sm">
-                      <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-primary/10">
-                        <span className="text-4xl font-bold text-primary">
-                          {consult.childName.charAt(0)}
-                        </span>
-                      </div>
-                      <p className="mt-3 text-sm text-muted-foreground">
-                        {videoError || 'Video room unavailable'}
-                      </p>
-                      <button
-                        onClick={() => { setVideoLoading(true); setVideoError(null); window.location.reload() }}
-                        className="mt-3 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground"
-                      >
-                        Retry
-                      </button>
+                </div>
+              ) : roomUrl ? (
+                <iframe
+                  src={`${roomUrl}?t=${encodeURIComponent(currentDoctor.name)}&showLeaveButton=false&showFullscreenButton=true`}
+                  allow="camera; microphone; fullscreen; display-capture"
+                  className="h-full w-full border-0"
+                  title="Video consultation"
+                />
+              ) : (
+                <div className="flex h-full items-center justify-center">
+                  <div className="text-center max-w-sm">
+                    <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-primary/10">
+                      <span className="text-4xl font-bold text-primary">
+                        {consult.childName.charAt(0)}
+                      </span>
                     </div>
+                    <p className="mt-3 text-sm text-muted-foreground">
+                      {videoError || 'Video room unavailable'}
+                    </p>
+                    <button
+                      onClick={() => { setVideoLoading(true); setVideoError(null); window.location.reload() }}
+                      className="mt-3 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground"
+                    >
+                      Retry
+                    </button>
                   </div>
-                )}
-              </>
-            )}
+                </div>
+              )}
+            </div>
           </div>
 
           {/* Controls bar */}
@@ -288,64 +284,93 @@ export default function DoctorConsultRoomPage() {
           </div>
         </div>
 
-        {/* CENTER: Doctor Notes (25%) */}
+        {/* CENTER: Doctor Notes / Whiteboard (25%) */}
         <div className="flex w-[25%] flex-col border-r border-border">
           <div className="flex items-center justify-between border-b border-border px-3 py-2.5">
-            <h2 className="text-sm font-semibold text-foreground">Doctor Notes</h2>
-            <button
-              onClick={handleSaveNotes}
-              className="flex items-center gap-1 rounded px-2 py-1 text-xs text-primary hover:bg-primary/10"
-            >
-              <Save className="h-3 w-3" />
-              {notesSaved ? 'Saved!' : 'Save'}
-            </button>
-          </div>
-
-          <div className="flex-1 overflow-y-auto p-3">
-            <div className="space-y-3">
-              <NoteField
-                label="Chief Complaints"
-                value={notes.chiefComplaints}
-                onChange={(v) => setNotes({ ...notes, chiefComplaints: v })}
-                placeholder="Fever since 3 days, cough..."
-              />
-              <NoteField
-                label="History of Present Illness"
-                value={notes.historyOfPresentIllness}
-                onChange={(v) => setNotes({ ...notes, historyOfPresentIllness: v })}
-                placeholder="Started with mild fever, progressed to..."
-              />
-              <NoteField
-                label="Diagnosis"
-                value={notes.diagnosis}
-                onChange={(v) => setNotes({ ...notes, diagnosis: v })}
-                placeholder="Acute bronchitis / URTI..."
-              />
-              <NoteField
-                label="Treatment Plan"
-                value={notes.treatmentPlan}
-                onChange={(v) => setNotes({ ...notes, treatmentPlan: v })}
-                placeholder="Rx: Amoxicillin 250mg TID x 5 days..."
-              />
-              <NoteField
-                label="Follow-up"
-                value={notes.followUp}
-                onChange={(v) => setNotes({ ...notes, followUp: v })}
-                placeholder="Review in 5 days, if fever persists..."
-              />
-              <NoteField
-                label="Summary"
-                value={notes.summary}
-                onChange={(v) => setNotes({ ...notes, summary: v })}
-                placeholder="Brief summary for patient report..."
-              />
+            {/* Tab buttons */}
+            <div className="flex gap-1">
+              <button
+                onClick={() => setActivePanel('notes')}
+                className={cn(
+                  'rounded px-2.5 py-1 text-xs font-medium transition-colors',
+                  activePanel === 'notes' ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                Notes
+              </button>
+              <button
+                onClick={() => setActivePanel('whiteboard')}
+                className={cn(
+                  'rounded px-2.5 py-1 text-xs font-medium transition-colors',
+                  activePanel === 'whiteboard' ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                Whiteboard
+              </button>
             </div>
+            {activePanel === 'notes' && (
+              <button
+                onClick={handleSaveNotes}
+                className="flex items-center gap-1 rounded px-2 py-1 text-xs text-primary hover:bg-primary/10"
+              >
+                <Save className="h-3 w-3" />
+                {notesSaved ? 'Saved!' : 'Save'}
+              </button>
+            )}
           </div>
 
-          <div className="border-t border-border p-3">
-            <p className="text-xs text-muted-foreground">
-              Notes are auto-saved and will be included in the final consultation report.
-            </p>
+          {/* Whiteboard panel */}
+          <div className={activePanel === 'whiteboard' ? 'flex-1' : 'hidden'}>
+            <Whiteboard />
+          </div>
+
+          {/* Notes panel */}
+          <div className={activePanel === 'notes' ? 'flex flex-1 flex-col' : 'hidden'}>
+            <div className="flex-1 overflow-y-auto p-3">
+              <div className="space-y-3">
+                <NoteField
+                  label="Chief Complaints"
+                  value={notes.chiefComplaints}
+                  onChange={(v) => setNotes({ ...notes, chiefComplaints: v })}
+                  placeholder="Fever since 3 days, cough..."
+                />
+                <NoteField
+                  label="History of Present Illness"
+                  value={notes.historyOfPresentIllness}
+                  onChange={(v) => setNotes({ ...notes, historyOfPresentIllness: v })}
+                  placeholder="Started with mild fever, progressed to..."
+                />
+                <NoteField
+                  label="Diagnosis"
+                  value={notes.diagnosis}
+                  onChange={(v) => setNotes({ ...notes, diagnosis: v })}
+                  placeholder="Acute bronchitis / URTI..."
+                />
+                <NoteField
+                  label="Treatment Plan"
+                  value={notes.treatmentPlan}
+                  onChange={(v) => setNotes({ ...notes, treatmentPlan: v })}
+                  placeholder="Rx: Amoxicillin 250mg TID x 5 days..."
+                />
+                <NoteField
+                  label="Follow-up"
+                  value={notes.followUp}
+                  onChange={(v) => setNotes({ ...notes, followUp: v })}
+                  placeholder="Review in 5 days, if fever persists..."
+                />
+                <NoteField
+                  label="Summary"
+                  value={notes.summary}
+                  onChange={(v) => setNotes({ ...notes, summary: v })}
+                  placeholder="Brief summary for patient report..."
+                />
+              </div>
+            </div>
+            <div className="border-t border-border p-3">
+              <p className="text-xs text-muted-foreground">
+                Notes auto-saved. Included in final report.
+              </p>
+            </div>
           </div>
         </div>
 
