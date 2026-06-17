@@ -138,14 +138,11 @@ export default function DoctorProfilePage() {
           {/* Book CTA */}
           <div className="mt-6 border-t border-border pt-6">
             <a
-              href={`/login/patient?returnTo=/doctors/${doctor.id}`}
+              href={`/booking/${doctor.id}`}
               className="flex h-12 w-full items-center justify-center rounded-xl bg-primary font-semibold text-primary-foreground transition-opacity hover:opacity-90"
             >
               Book Consultation — ₹{doctor.fee}
             </a>
-            <p className="mt-2 text-center text-xs text-muted-foreground">
-              You'll need to log in to complete the booking
-            </p>
           </div>
         </div>
       </div>
