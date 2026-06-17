@@ -173,6 +173,17 @@ export default function DoctorConsultRoomPage() {
           </div>
         </div>
         <div className="flex items-center gap-3">
+          {roomUrl && (
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(roomUrl)
+                alert('Invite link copied! Share it with the patient to join.')
+              }}
+              className="rounded-lg border border-border px-3 py-1 text-xs text-muted-foreground hover:text-foreground"
+            >
+              📋 Copy Invite Link
+            </button>
+          )}
           <span className="rounded-full bg-primary/15 px-3 py-1 text-xs font-medium text-primary">
             ● Live — {formatTime(timer)}
           </span>
