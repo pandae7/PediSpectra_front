@@ -5,6 +5,15 @@ import { useRouter, useParams } from 'next/navigation'
 import { ArrowLeft, CheckCircle, FileText, Upload } from 'lucide-react'
 import { useDoctor } from '@/lib/doctor-context'
 
+interface DoctorNotes {
+  chiefComplaints: string
+  historyOfPresentIllness: string
+  diagnosis: string
+  treatmentPlan: string
+  followUp: string
+  summary: string
+}
+
 export default function DoctorPostConsultPage() {
   const router = useRouter()
   const params = useParams()
@@ -20,6 +29,26 @@ export default function DoctorPostConsultPage() {
   useEffect(() => {
     if (!isLoading && !currentDoctor) router.push('/login/doctor')
   }, [currentDoctor, isLoading, router])
+
+  // Load notes from consult room (saved during the call)
+  useEffect(() => {
+    try {
+      const savedNotes = localStorage.getItem(`pedispectra-notes-${consultId}`)
+      if (savedNotes) {
+        const notes: DoctorNotes = JSON.parse(savedNotes)
+        const compiled = [
+          notes.chiefComplaints && `Chief Complaints:\n${notes.chiefComplaints}`,
+          notes.historyOfPresentIllness && `History of Present Illness:\n${notes.historyOfPresentIllness}`,
+          notes.diagnosis && `Diagnosis:\n${notes.diagnosis}`,
+          notes.treatmentPlan && `Treatment Plan:\n${notes.treatmentPlan}`,
+          notes.followUp && `Follow-up:\n${notes.followUp}`,
+          notes.summary && `Summary:\n${notes.summary}`,
+        ].filter(Boolean).join('\n\n')
+
+        if (compiled) setRemarks(compiled)
+      }
+    } catch {}
+  }, [consultId])
 
   if (isLoading || !currentDoctor) return null
 
@@ -48,7 +77,7 @@ export default function DoctorPostConsultPage() {
             <CheckCircle className="h-8 w-8 text-primary" />
           </div>
           <h2 className="text-xl font-bold text-foreground">Consultation Complete</h2>
-          <p className="mt-2 text-muted-foreground">Remarks saved. Redirecting to dashboard...</p>
+          <p className="mt-2 text-muted-foreground">Report saved and shared with patient. Redirecting...</p>
         </div>
       </div>
     )
@@ -67,27 +96,30 @@ export default function DoctorPostConsultPage() {
 
         <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
           <div className="mb-6">
-            <h1 className="text-xl font-bold text-foreground">Post-Consultation Summary</h1>
+            <h1 className="text-xl font-bold text-foreground">Post-Consultation Report</h1>
             {consult && (
               <p className="mt-1 text-sm text-muted-foreground">
                 Patient: {consult.childName} ({consult.patientName}) · {consult.subspeciality}
               </p>
             )}
+            <p className="mt-2 text-xs text-muted-foreground">
+              Your notes from the consultation have been pre-filled below. Review, edit if needed, and submit to share with the patient.
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">
             {/* Remarks */}
             <div>
               <label className="mb-1.5 block text-sm font-medium text-foreground">
-                Final Remarks / Prescription Notes <span className="text-destructive">*</span>
+                Consultation Report <span className="text-destructive">*</span>
               </label>
               <textarea
                 value={remarks}
                 onChange={(e) => setRemarks(e.target.value)}
                 maxLength={5000}
-                rows={6}
+                rows={12}
                 placeholder="Write your consultation remarks, diagnosis, treatment plan, and any follow-up instructions..."
-                className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
               <p className="mt-1 text-xs text-muted-foreground">
                 {remarks.length}/5000 characters
@@ -126,7 +158,7 @@ export default function DoctorPostConsultPage() {
               disabled={!remarks.trim()}
               className="h-12 w-full rounded-xl bg-primary font-semibold text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
             >
-              Submit & Complete Consultation
+              Submit Report & Complete Consultation
             </button>
           </form>
         </div>

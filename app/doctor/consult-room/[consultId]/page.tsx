@@ -38,6 +38,9 @@ export default function DoctorConsultRoomPage() {
   const [activePanel, setActivePanel] = useState<'notes' | 'whiteboard'>('notes')
   const [timer, setTimer] = useState(0)
   const [notesSaved, setNotesSaved] = useState(false)
+  const [roomUrl, setRoomUrl] = useState<string | null>(null)
+  const [videoLoading, setVideoLoading] = useState(true)
+  const [videoError, setVideoError] = useState<string | null>(null)
 
   const [notes, setNotes] = useState<DoctorNotes>({
     chiefComplaints: '',
@@ -78,6 +81,52 @@ export default function DoctorConsultRoomPage() {
     } catch {}
   }, [consultId])
 
+  // Create Daily.co room on mount
+  useEffect(() => {
+    async function createRoom() {
+      try {
+        // Check if we already have a room URL for this consultation
+        const storedUrl = localStorage.getItem(`pedispectra-room-${consultId}`)
+        if (storedUrl) {
+          setRoomUrl(storedUrl)
+          setVideoLoading(false)
+          return
+        }
+
+        const res = await fetch('/api/video/create-room', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ consultationId: consultId }),
+        })
+
+        if (!res.ok) {
+          setVideoError('Could not create video room. Try refreshing.')
+          setVideoLoading(false)
+          return
+        }
+
+        const data = await res.json()
+        if (data.mock) {
+          // API key not configured
+          setVideoError('Daily.co API key not configured on server.')
+          setVideoLoading(false)
+          return
+        }
+
+        setRoomUrl(data.url)
+        localStorage.setItem(`pedispectra-room-${consultId}`, data.url)
+        setVideoLoading(false)
+      } catch {
+        setVideoError('Failed to connect to video service.')
+        setVideoLoading(false)
+      }
+    }
+
+    if (currentDoctor && consult) {
+      createRoom()
+    }
+  }, [consultId, currentDoctor, consult])
+
   if (isLoading || !currentDoctor || !consult) return null
 
   const formatTime = (seconds: number) => {
@@ -87,19 +136,11 @@ export default function DoctorConsultRoomPage() {
   }
 
   const handleEndCall = () => {
-    // Save notes as post-consult data
-    const fullRemarks = [
-      notes.chiefComplaints && `Chief Complaints: ${notes.chiefComplaints}`,
-      notes.historyOfPresentIllness && `History: ${notes.historyOfPresentIllness}`,
-      notes.diagnosis && `Diagnosis: ${notes.diagnosis}`,
-      notes.treatmentPlan && `Treatment Plan: ${notes.treatmentPlan}`,
-      notes.followUp && `Follow-up: ${notes.followUp}`,
-      notes.summary && `Summary: ${notes.summary}`,
-    ].filter(Boolean).join('\n\n')
-
-    if (fullRemarks) {
-      completeConsultation(consultId, fullRemarks)
-    }
+    // Don't complete here — let the post-consult page handle it
+    // Just save notes to localStorage for the post-consult page to pick up
+    try {
+      localStorage.setItem(`pedispectra-notes-${consultId}`, JSON.stringify(notes))
+    } catch {}
     router.push(`/doctor/post-consult/${consultId}`)
   }
 
@@ -147,33 +188,41 @@ export default function DoctorConsultRoomPage() {
               <Whiteboard />
             ) : (
               <>
-                {/* Mock video area */}
-                <div className="flex h-full items-center justify-center">
-                  <div className="text-center">
-                    <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-primary/10">
-                      <span className="text-4xl font-bold text-primary">
-                        {consult.childName.charAt(0)}
-                      </span>
+                {/* Video area — Daily.co embed or fallback */}
+                {videoLoading ? (
+                  <div className="flex h-full items-center justify-center">
+                    <div className="text-center">
+                      <div className="mx-auto h-8 w-8 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                      <p className="mt-3 text-sm text-muted-foreground">Connecting to video room...</p>
                     </div>
-                    <p className="mt-3 text-sm text-muted-foreground">
-                      Patient video feed
-                    </p>
-                    <p className="mt-1 text-xs text-muted-foreground">
-                      Daily.co integration ready — add API key to enable live video
-                    </p>
                   </div>
-                </div>
-
-                {/* Self-view */}
-                <div className="absolute bottom-4 right-4 h-28 w-40 overflow-hidden rounded-lg border border-border bg-card shadow-lg">
-                  <div className="flex h-full w-full items-center justify-center">
-                    {cameraOn ? (
-                      <span className="text-xs text-muted-foreground">You</span>
-                    ) : (
-                      <CameraOff className="h-5 w-5 text-muted-foreground" />
-                    )}
+                ) : roomUrl ? (
+                  <iframe
+                    src={`${roomUrl}?t=${encodeURIComponent(currentDoctor.name)}&showLeaveButton=false&showFullscreenButton=true`}
+                    allow="camera; microphone; fullscreen; display-capture"
+                    className="h-full w-full border-0"
+                    title="Video consultation"
+                  />
+                ) : (
+                  <div className="flex h-full items-center justify-center">
+                    <div className="text-center max-w-sm">
+                      <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-primary/10">
+                        <span className="text-4xl font-bold text-primary">
+                          {consult.childName.charAt(0)}
+                        </span>
+                      </div>
+                      <p className="mt-3 text-sm text-muted-foreground">
+                        {videoError || 'Video room unavailable'}
+                      </p>
+                      <button
+                        onClick={() => { setVideoLoading(true); setVideoError(null); window.location.reload() }}
+                        className="mt-3 rounded-lg bg-primary px-4 py-2 text-xs font-medium text-primary-foreground"
+                      >
+                        Retry
+                      </button>
+                    </div>
                   </div>
-                </div>
+                )}
               </>
             )}
           </div>

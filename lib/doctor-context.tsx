@@ -115,7 +115,7 @@ export function DoctorProvider({ children }: { children: ReactNode }) {
       postConsultData: { remarks, completedAt: new Date().toISOString() },
     }
     const all = updateConsultation(updated)
-    setConsultations(all)
+    setConsultations([...all])
   }
 
   return (
