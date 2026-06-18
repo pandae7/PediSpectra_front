@@ -8,7 +8,7 @@ const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
 const geistMono = Geist_Mono({ variable: '--font-geist-mono', subsets: ['latin'] })
 
 export const metadata: Metadata = {
-  title: 'PediSpectra — All 18 Pediatric Subspecialties, One Platform',
+  title: 'One Roof Pediatrics — All 18 Pediatric Subspecialties, One Platform',
   description:
     'Expert pediatric subspecialist consultations via video. Every specialist your child needs — one tap away.',
 }

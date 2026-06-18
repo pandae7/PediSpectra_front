@@ -9,6 +9,7 @@ import {
   Eye,
   Heart,
   HeartPulse,
+  Home,
   MapPin,
   Microscope,
   Pill,
@@ -62,10 +63,10 @@ export default function LandingPage() {
           {/* Logo */}
           <div className="flex items-center gap-2">
             <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-              <Stethoscope className="h-5 w-5 text-primary-foreground" />
+              <Home className="h-5 w-5 text-primary-foreground" />
             </div>
             <span className="text-xl font-bold text-foreground">
-              Pedi<span className="text-primary">Spectra</span>
+              One Roof <span className="text-primary">Pediatrics</span>
             </span>
           </div>
 
@@ -304,7 +305,7 @@ export default function LandingPage() {
             Built by Subspecialists
           </h2>
           <p className="mx-auto mt-4 max-w-2xl text-center text-muted-foreground">
-            PediSpectra is founded by practicing pediatric subspecialists who understand that finding the
+            One Roof Pediatrics is founded by practicing pediatric subspecialists who understand that finding the
             right expert for your child shouldn't be a challenge.
           </p>
 
@@ -347,12 +348,12 @@ export default function LandingPage() {
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row">
           <div className="flex items-center gap-2">
             <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
-              <Stethoscope className="h-4 w-4 text-primary-foreground" />
+              <Home className="h-4 w-4 text-primary-foreground" />
             </div>
-            <span className="text-sm font-semibold text-foreground">PediSpectra</span>
+            <span className="text-sm font-semibold text-foreground">One Roof Pediatrics</span>
           </div>
           <p className="text-sm text-muted-foreground">
-            © 2025 PediSpectra. All rights reserved.
+            © 2025 One Roof Pediatrics. All rights reserved.
           </p>
           <div className="flex gap-4 text-sm text-muted-foreground">
             <a href="/doctors" className="hover:text-foreground">Find a Doctor</a>

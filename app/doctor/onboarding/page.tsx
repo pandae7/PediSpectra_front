@@ -49,6 +49,7 @@ export default function DoctorOnboardingPage() {
       consultationCount: 0,
       languages: form.languages.split(',').map((l) => l.trim()).filter(Boolean),
       city: form.city || 'Online',
+      bio: '',
       availability: [],
     }
 

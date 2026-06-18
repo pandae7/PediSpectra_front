@@ -45,7 +45,7 @@ export default function DoctorDashboardPage() {
               <Stethoscope className="h-5 w-5 text-primary-foreground" />
             </div>
             <span className="text-lg font-bold text-foreground">
-              Pedi<span className="text-primary">Spectra</span>
+              One Roof <span className="text-primary">Pediatrics</span>
             </span>
           </div>
           <div className="flex items-center gap-3">

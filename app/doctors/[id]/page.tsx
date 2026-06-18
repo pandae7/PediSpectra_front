@@ -65,12 +65,17 @@ export default function DoctorProfilePage() {
         {/* Profile header */}
         <div className="rounded-2xl border border-border bg-card p-6 sm:p-8">
           <div className="flex flex-col items-center gap-4 sm:flex-row sm:items-start">
-            <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-              <span className="text-2xl font-bold">{doctor.name.split(' ').map(n => n[0]).join('').slice(0, 2)}</span>
+            {/* Profile image */}
+            <div className="flex h-24 w-24 shrink-0 items-center justify-center rounded-full border-2 border-border bg-primary/10 text-primary">
+              <span className="text-3xl font-bold">{doctor.name.split(' ').map(n => n[0]).join('').slice(0, 2)}</span>
             </div>
             <div className="flex-1 text-center sm:text-left">
               <h1 className="text-2xl font-bold text-foreground">{doctor.name}</h1>
               <p className="mt-1 text-primary font-medium">{doctor.subspeciality}</p>
+              {/* Bio */}
+              {doctor.bio && (
+                <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{doctor.bio}</p>
+              )}
               <div className="mt-3 flex flex-wrap items-center justify-center gap-4 text-sm sm:justify-start">
                 <span className="flex items-center gap-1">
                   <Star className="h-4 w-4 fill-primary text-primary" />
