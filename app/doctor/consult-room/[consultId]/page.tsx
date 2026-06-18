@@ -16,6 +16,7 @@ import {
 } from 'lucide-react'
 import { useDoctor } from '@/lib/doctor-context'
 import { Whiteboard } from '@/components/consultation/whiteboard'
+import { GrowthChart } from '@/components/consultation/growth-chart'
 import { cn } from '@/lib/utils'
 
 interface DoctorNotes {
@@ -35,7 +36,7 @@ export default function DoctorConsultRoomPage() {
 
   const [micOn, setMicOn] = useState(true)
   const [cameraOn, setCameraOn] = useState(true)
-  const [activePanel, setActivePanel] = useState<'notes' | 'whiteboard'>('notes')
+  const [activePanel, setActivePanel] = useState<'notes' | 'whiteboard' | 'growth'>('notes')
   const [timer, setTimer] = useState(0)
   const [notesSaved, setNotesSaved] = useState(false)
   const [roomUrl, setRoomUrl] = useState<string | null>(null)
@@ -307,6 +308,15 @@ export default function DoctorConsultRoomPage() {
               >
                 Whiteboard
               </button>
+              <button
+                onClick={() => setActivePanel('growth')}
+                className={cn(
+                  'rounded px-2.5 py-1 text-xs font-medium transition-colors',
+                  activePanel === 'growth' ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                Growth
+              </button>
             </div>
             {activePanel === 'notes' && (
               <button
@@ -322,6 +332,11 @@ export default function DoctorConsultRoomPage() {
           {/* Whiteboard panel */}
           <div className={activePanel === 'whiteboard' ? 'flex-1' : 'hidden'}>
             <Whiteboard />
+          </div>
+
+          {/* Growth chart panel */}
+          <div className={activePanel === 'growth' ? 'flex-1' : 'hidden'}>
+            <GrowthChart />
           </div>
 
           {/* Notes panel */}

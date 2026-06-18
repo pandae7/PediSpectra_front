@@ -124,14 +124,14 @@
   --muted: #f0e8dc;
   --muted-foreground: #6b5c4f;
 
-  --accent: #f5ede3;
-  --accent-foreground: #2c1810;
+  --accent: #c2654a;
+  --accent-foreground: #ffffff;
 
   --destructive: #c53030;
 
   --border: #e2d6c8;
   --input: #e2d6c8;
-  --ring: #1a7a6e;
+  --ring: #c2654a;
 }
 
 @layer base {

@@ -100,10 +100,10 @@ export default function LandingPage() {
           <div className="flex items-center gap-2 md:hidden">
             <ThemeSelector />
             <a
-              href="/login/patient"
+              href="/doctors"
               className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
             >
-              Login
+              Book
             </a>
           </div>
         </div>
@@ -135,7 +135,7 @@ export default function LandingPage() {
           {/* CTA buttons */}
           <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
             <a
-              href="/login/patient"
+              href="/doctors"
               className="inline-flex h-12 items-center gap-2 rounded-xl bg-primary px-8 text-base font-semibold text-primary-foreground transition-opacity hover:opacity-90"
             >
               <Users className="h-5 w-5" />
@@ -355,7 +355,8 @@ export default function LandingPage() {
             © 2025 PediSpectra. All rights reserved.
           </p>
           <div className="flex gap-4 text-sm text-muted-foreground">
-            <a href="/login/patient" className="hover:text-foreground">Patient Login</a>
+            <a href="/doctors" className="hover:text-foreground">Find a Doctor</a>
+            <a href="/patient/consultations" className="hover:text-foreground">My Consultations</a>
             <a href="/login/doctor" className="hover:text-foreground">Doctor Login</a>
             <a href="/doctor/onboarding" className="hover:text-foreground">Join as Doctor</a>
           </div>
