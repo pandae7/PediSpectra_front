@@ -71,14 +71,17 @@ export default function LandingPage() {
 
           {/* Nav links — desktop */}
           <div className="hidden items-center gap-6 md:flex">
+            <a href="/doctors" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+              Doctors
+            </a>
             <a href="#subspecialities" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
               Subspecialities
             </a>
             <a href="#about" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
               About the Team
             </a>
-            <a href="/login/patient" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-              Patient Login
+            <a href="/patient/consultations" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+              My Consultations
             </a>
             <a href="/login/doctor" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
               Doctor Login

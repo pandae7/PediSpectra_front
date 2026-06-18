@@ -36,6 +36,15 @@ export interface Consultation {
   postConsultData?: Record<string, unknown>
 }
 
+export interface Review {
+  id: string
+  doctorId: string
+  rating: number
+  text: string
+  reviewerName: string
+  date: string
+}
+
 export const SUBSPECIALITIES = [
   'Cardiology', 'Neurology', 'Pulmonology', 'Gastroenterology',
   'Nephrology', 'Endocrinology', 'Hematology', 'Oncology',
@@ -166,4 +175,44 @@ export function addConsultation(consultation: Consultation) {
   consultations.push(consultation)
   try { localStorage.setItem(CONSULTATIONS_KEY, JSON.stringify(consultations)) } catch {}
   return consultations
+}
+
+export const SEED_REVIEWS: Review[] = [
+  // Dr. Priya Sharma (dr-001) - Cardiology
+  { id: 'rev-001', doctorId: 'dr-001', rating: 5, text: 'Dr. Priya was incredibly thorough with my son\'s heart murmur evaluation. She explained everything clearly and made us feel at ease. Highly recommend!', reviewerName: 'Anita M.', date: '2025-06-10' },
+  { id: 'rev-002', doctorId: 'dr-001', rating: 5, text: 'Excellent doctor. Took time to answer all our questions about our daughter\'s ECG results. Very patient and kind.', reviewerName: 'Ravi K.', date: '2025-05-28' },
+  { id: 'rev-003', doctorId: 'dr-001', rating: 4, text: 'Good consultation. The video quality was smooth. Only wish the slot was a bit longer for follow-up questions.', reviewerName: 'Meghna S.', date: '2025-05-15' },
+  // Dr. Rajesh Kumar (dr-003) - Neurology
+  { id: 'rev-004', doctorId: 'dr-003', rating: 5, text: 'Dr. Rajesh diagnosed my daughter\'s seizure condition that other doctors missed. Absolute lifesaver. His expertise is unmatched.', reviewerName: 'Preethi M.', date: '2025-06-18' },
+  { id: 'rev-005', doctorId: 'dr-003', rating: 5, text: 'We consulted for our son\'s recurring headaches. Dr. Kumar was meticulous, ordered the right tests, and the treatment worked perfectly.', reviewerName: 'Sunil R.', date: '2025-06-02' },
+  { id: 'rev-006', doctorId: 'dr-003', rating: 4, text: 'Very knowledgeable doctor. Gave us a clear treatment plan for epilepsy management. Would consult again.', reviewerName: 'Divya P.', date: '2025-05-20' },
+  // Dr. Anitha Reddy (dr-005) - Pulmonology
+  { id: 'rev-007', doctorId: 'dr-005', rating: 5, text: 'My son\'s asthma is finally under control thanks to Dr. Anitha. She created a perfect inhaler plan and followed up proactively.', reviewerName: 'Suresh I.', date: '2025-06-10' },
+  { id: 'rev-008', doctorId: 'dr-005', rating: 4, text: 'Good experience. Doctor was attentive and explained the nebulization technique clearly over video.', reviewerName: 'Pooja N.', date: '2025-05-25' },
+  // Dr. Sanjay Patel (dr-007) - Gastroenterology
+  { id: 'rev-009', doctorId: 'dr-007', rating: 5, text: 'Our child had chronic stomach pain for months. Dr. Patel identified it as lactose intolerance in the first consultation itself. Brilliant!', reviewerName: 'Neha G.', date: '2025-06-12' },
+  { id: 'rev-010', doctorId: 'dr-007', rating: 4, text: 'Very patient and understanding. Gave detailed dietary recommendations for my daughter\'s reflux issue.', reviewerName: 'Vikash T.', date: '2025-05-30' },
+  // Dr. Meera Nair (dr-011) - Endocrinology
+  { id: 'rev-011', doctorId: 'dr-011', rating: 5, text: 'Dr. Meera has been managing my son\'s Type 1 diabetes for a year now. She is always available and adjusts insulin doses promptly.', reviewerName: 'Anita D.', date: '2025-06-15' },
+  { id: 'rev-012', doctorId: 'dr-011', rating: 5, text: 'Consulted for growth concerns. Dr. Nair ordered the right hormone tests and reassured us that our daughter is on track. Very calming presence.', reviewerName: 'Lakshmi V.', date: '2025-06-01' },
+  // Dr. Farah Khan (dr-019) - Infectious Diseases
+  { id: 'rev-013', doctorId: 'dr-019', rating: 5, text: 'Dr. Farah diagnosed a rare tropical infection that our local pediatrician couldn\'t figure out. The video consult saved us a trip to Bangalore.', reviewerName: 'Mohammed F.', date: '2025-06-08' },
+  { id: 'rev-014', doctorId: 'dr-019', rating: 4, text: 'Very thorough history-taking. Gave proper antibiotic guidance and when to escalate to emergency.', reviewerName: 'Reshma B.', date: '2025-05-22' },
+  // Dr. Kavitha Mohan (dr-025) - Developmental Pediatrics
+  { id: 'rev-015', doctorId: 'dr-025', rating: 5, text: 'Dr. Kavitha helped us understand our son\'s ADHD diagnosis. She gave practical strategies for school and home. Life-changing consultation.', reviewerName: 'Deepa K.', date: '2025-06-14' },
+  { id: 'rev-016', doctorId: 'dr-025', rating: 5, text: 'We were worried about speech delay. Dr. Mohan assessed thoroughly and connected us with the right therapist. So grateful.', reviewerName: 'Arun P.', date: '2025-05-28' },
+]
+
+const REVIEWS_KEY = 'pedispectra-reviews'
+
+export function getReviews(): Review[] {
+  if (typeof window === 'undefined') return SEED_REVIEWS
+  try {
+    const stored = localStorage.getItem(REVIEWS_KEY)
+    return stored ? JSON.parse(stored) : SEED_REVIEWS
+  } catch { return SEED_REVIEWS }
+}
+
+export function getReviewsForDoctor(doctorId: string): Review[] {
+  return getReviews().filter((r) => r.doctorId === doctorId).sort((a, b) => b.date.localeCompare(a.date))
 }
