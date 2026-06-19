@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Bell, Calendar, Clock, FileText, Video } from 'lucide-react'
 import { getConsultations, getDoctors, initializeMockData, type Consultation, type DoctorProfile } from '@/lib/mock-data'
+import { Navbar } from '@/components/layout/navbar'
 
 export default function PatientConsultationsPage() {
   const router = useRouter()
@@ -30,17 +31,12 @@ export default function PatientConsultationsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-background px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-3xl">
-        <button
-          onClick={() => router.push('/')}
-          className="mb-6 flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to home
-        </button>
+    <div className="min-h-screen bg-background">
+      <Navbar showBack backHref="/" />
 
-        <h1 className="mb-6 text-2xl font-bold text-foreground">My Consultations</h1>
+      <div className="px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-3xl">
+          <h1 className="mb-6 text-2xl font-bold text-foreground">My Consultations</h1>
 
         {/* Upcoming */}
         <section className="mb-10">
@@ -165,6 +161,7 @@ export default function PatientConsultationsPage() {
             </div>
           )}
         </section>
+      </div>
       </div>
     </div>
   )

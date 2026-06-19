@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ArrowLeft, Filter, MapPin, Search, Star, Stethoscope } from 'lucide-react'
 import { getDoctors, initializeMockData, SUBSPECIALITIES, type DoctorProfile } from '@/lib/mock-data'
+import { Navbar } from '@/components/layout/navbar'
 import { cn } from '@/lib/utils'
 
 const CITIES = ['All Locations', 'Bangalore', 'Chennai', 'Hyderabad', 'Mumbai', 'Delhi', 'Mysuru', 'Hubli', 'Mangaluru', 'Pune', 'Kolkata', 'Kochi']
@@ -34,15 +35,11 @@ function DoctorsListContent() {
   })
 
   return (
-    <div className="min-h-screen bg-background px-4 py-8 sm:px-6 lg:px-8">
-      <div className="mx-auto max-w-7xl">
-        <a
-          href="/"
-          className="mb-6 inline-flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground"
-        >
-          <ArrowLeft className="h-4 w-4" />
-          Back to home
-        </a>
+    <div className="min-h-screen bg-background">
+      <Navbar showBack backHref="/" />
+
+      <div className="px-4 py-8 sm:px-6 lg:px-8">
+        <div className="mx-auto max-w-7xl">
 
         <div className="mb-6 flex items-center justify-between">
           <div>
@@ -217,6 +214,7 @@ function DoctorsListContent() {
             )}
           </div>
         </div>
+      </div>
       </div>
     </div>
   )
