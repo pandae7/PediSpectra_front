@@ -61,10 +61,28 @@ export default function DoctorAvailabilityPage() {
 
   const handleSave = () => {
     try {
+      // Save raw slot keys for this page to reload later
       localStorage.setItem(
         `pedispectra-availability-${currentDoctor.id}`,
         JSON.stringify(Array.from(selected))
       )
+
+      // Also update the doctor's availability in the doctors registry
+      // so the booking page can read it
+      const doctorsRaw = localStorage.getItem('pedispectra-doctors')
+      if (doctorsRaw) {
+        const doctors = JSON.parse(doctorsRaw)
+        const idx = doctors.findIndex((d: { id: string }) => d.id === currentDoctor.id)
+        if (idx >= 0) {
+          // Convert selected slot keys ("Monday-09:00 AM") into WeeklySlot objects
+          const slots = Array.from(selected).map((key) => {
+            const [day, ...timeParts] = key.split('-')
+            return { day, time: timeParts.join('-') }
+          })
+          doctors[idx].availability = slots
+          localStorage.setItem('pedispectra-doctors', JSON.stringify(doctors))
+        }
+      }
     } catch {}
     setSaved(true)
     setTimeout(() => setSaved(false), 3000)
