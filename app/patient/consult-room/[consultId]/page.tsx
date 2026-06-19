@@ -100,7 +100,7 @@ function PatientConsultRoomContent() {
   }
 
   const handleEndCall = () => {
-    router.push('/patient/consultations')
+    router.push(`/patient/post-consult/${consultId}`)
   }
 
   const sendMessage = () => {

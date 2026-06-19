@@ -144,9 +144,10 @@ export default function DoctorDashboardPage() {
             <h2 className="mb-4 text-lg font-semibold text-foreground">Next Consultations</h2>
             <div className="space-y-3">
               {upcoming.slice(0, 3).map((consult) => (
-                <div
+                <a
                   key={consult.id}
-                  className="flex items-center justify-between rounded-xl border border-border bg-card p-4"
+                  href={`/doctor/consultation/${consult.id}`}
+                  className="flex items-center justify-between rounded-xl border border-border bg-card p-4 transition-all hover:border-primary/50 hover:shadow-md"
                 >
                   <div>
                     <p className="font-medium text-foreground">{consult.childName}</p>
@@ -158,7 +159,7 @@ export default function DoctorDashboardPage() {
                     <p className="text-sm font-medium text-foreground">{consult.date}</p>
                     <p className="text-sm text-muted-foreground">{consult.time}</p>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
           </section>

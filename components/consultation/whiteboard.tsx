@@ -10,7 +10,7 @@ interface Stroke {
   thickness: number
 }
 
-const COLORS = ['#ffffff', '#ef4444', '#3b82f6', '#22c55e', '#eab308']
+const COLORS = ['#1a1a1a', '#ef4444', '#2563eb', '#16a34a', '#ea580c']
 const THICKNESSES = [2, 4, 8]
 
 export function Whiteboard() {
@@ -28,7 +28,7 @@ export function Whiteboard() {
     const ctx = canvas.getContext('2d')
     if (!ctx) return
 
-    ctx.fillStyle = '#1a1a2e'
+    ctx.fillStyle = '#ffffff'
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
     const allStrokes = currentStroke ? [...strokes, currentStroke] : strokes

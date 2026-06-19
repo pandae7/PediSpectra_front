@@ -13,6 +13,7 @@ export default function DoctorProfilePage() {
   const [doctor, setDoctor] = useState<DoctorProfile | null>(null)
   const [reviews, setReviews] = useState<Review[]>([])
   const [copied, setCopied] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     initializeMockData()
@@ -22,6 +23,7 @@ export default function DoctorProfilePage() {
       setDoctor(found)
       setReviews(getReviewsForDoctor(doctorId))
     }
+    setLoading(false)
   }, [doctorId])
 
   const handleShare = async () => {
@@ -33,6 +35,17 @@ export default function DoctorProfilePage() {
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar showBack backHref="/doctors" backLabel="All Doctors" />
+        <div className="flex items-center justify-center py-20">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        </div>
+      </div>
+    )
   }
 
   if (!doctor) {

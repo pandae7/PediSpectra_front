@@ -156,10 +156,17 @@ export default function DoctorConsultRoomPage() {
   // Mock pre-consult data from patient
   const preConsultData = consult.preConsultData as Record<string, unknown> | undefined
   const patientFiles = [
-    { name: 'Previous prescription.pdf', type: 'pdf' },
-    { name: 'Lab report.pdf', type: 'pdf' },
-    { name: 'Symptom photo.jpg', type: 'image' },
+    { name: 'Previous prescription.pdf', type: 'pdf', imageUrl: '', viewUrl: '/mock-prescription.html' },
+    { name: 'Lab report - CBC.pdf', type: 'pdf', imageUrl: '', viewUrl: '/mock-lab-report.html' },
+    { name: 'Rash on left arm.jpg', type: 'image', imageUrl: 'https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/Eczema-arms.jpg/320px-Eczema-arms.jpg', viewUrl: 'https://upload.wikimedia.org/wikipedia/commons/b/b0/Eczema-arms.jpg' },
   ]
+  const patientInfo = {
+    symptoms: 'Fever since 4 days, cough at night',
+    medications: 'Paracetamol 250mg, Cetirizine 5ml',
+    allergies: 'No known allergies',
+    temperature: '101.2 F',
+    weight: '14 kg',
+  }
 
   return (
     <div className="flex h-screen flex-col bg-background">
@@ -455,35 +462,70 @@ export default function DoctorConsultRoomPage() {
 
           {/* Patient files */}
           <div className="flex-1 overflow-y-auto p-3">
+            {/* Quick vitals */}
+            <h3 className="mb-2 text-xs font-semibold uppercase text-muted-foreground">
+              Vitals
+            </h3>
+            <div className="mb-3 grid grid-cols-2 gap-1.5">
+              <div className="rounded bg-background p-1.5 text-center">
+                <p className="text-[10px] text-muted-foreground">Temp</p>
+                <p className="text-xs font-medium text-foreground">{patientInfo.temperature}</p>
+              </div>
+              <div className="rounded bg-background p-1.5 text-center">
+                <p className="text-[10px] text-muted-foreground">Weight</p>
+                <p className="text-xs font-medium text-foreground">{patientInfo.weight}</p>
+              </div>
+            </div>
+
+            {/* Symptoms */}
+            <h3 className="mb-1 text-xs font-semibold uppercase text-muted-foreground">
+              Symptoms
+            </h3>
+            <p className="mb-3 text-xs text-foreground">{patientInfo.symptoms}</p>
+
+            {/* Medications */}
+            <h3 className="mb-1 text-xs font-semibold uppercase text-muted-foreground">
+              Current Meds
+            </h3>
+            <p className="mb-3 text-xs text-foreground">{patientInfo.medications}</p>
+
+            {/* Allergies */}
+            <h3 className="mb-1 text-xs font-semibold uppercase text-muted-foreground">
+              Allergies
+            </h3>
+            <p className="mb-3 text-xs text-foreground">{patientInfo.allergies}</p>
+
+            {/* Files */}
             <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase text-muted-foreground">
               <FileText className="h-3.5 w-3.5" />
-              Patient Files
+              Files
             </h3>
             <div className="space-y-2">
               {patientFiles.map((file) => (
-                <div
+                <a
                   key={file.name}
-                  className="cursor-pointer rounded-lg border border-border bg-background p-2 text-xs text-foreground hover:border-primary/50"
+                  href={file.viewUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block cursor-pointer rounded-lg border border-border bg-background p-2 text-xs text-foreground hover:border-primary/50"
                 >
-                  <div className="flex items-center gap-2">
-                    <FileText className="h-3.5 w-3.5 text-primary" />
-                    <span className="truncate">{file.name}</span>
-                  </div>
-                </div>
+                  {file.type === 'image' && file.imageUrl ? (
+                    <div>
+                      <img src={file.imageUrl} alt={file.name} className="mb-1.5 w-full rounded object-cover" style={{ maxHeight: '80px' }} />
+                      <div className="flex items-center gap-2">
+                        <FileText className="h-3.5 w-3.5 text-primary" />
+                        <span className="truncate">{file.name}</span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <FileText className="h-3.5 w-3.5 text-primary" />
+                      <span className="truncate">{file.name}</span>
+                    </div>
+                  )}
+                </a>
               ))}
             </div>
-
-            {/* Pre-consult summary */}
-            {preConsultData && (
-              <div className="mt-4">
-                <h3 className="mb-2 text-xs font-semibold uppercase text-muted-foreground">
-                  Pre-Consult Info
-                </h3>
-                <div className="rounded-lg border border-border bg-background p-2 text-xs text-muted-foreground">
-                  <p>Symptoms and details submitted by parent before the call.</p>
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
