@@ -184,6 +184,12 @@ export default function PatientPostConsultPage() {
           </div>
           <div className="flex gap-3">
             <a
+              href={`/patient/messages/${consultId}`}
+              className="flex-1 rounded-lg border border-primary bg-primary/10 py-2.5 text-center text-sm font-medium text-primary hover:bg-primary/20"
+            >
+              💬 Message Doctor
+            </a>
+            <a
               href="/patient/consultations"
               className="flex-1 rounded-lg border border-border py-2.5 text-center text-sm font-medium text-foreground hover:bg-muted"
             >

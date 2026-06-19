@@ -138,6 +138,12 @@ export default function DoctorHistoryPage() {
                     >
                       View Full Details
                     </a>
+                    <a
+                      href={`/doctor/messages/${consult.id}`}
+                      className="flex items-center gap-1 rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 text-xs font-medium text-primary hover:bg-primary/20"
+                    >
+                      💬 Messages
+                    </a>
                     {reminderSent ? (
                       <span className="flex items-center gap-1 rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 text-xs text-primary">
                         <Bell className="h-3 w-3" />
