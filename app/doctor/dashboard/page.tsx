@@ -10,6 +10,7 @@ import {
   Stethoscope,
   Users,
   Video,
+  Wallet,
 } from 'lucide-react'
 import { useDoctor } from '@/lib/doctor-context'
 import { ThemeSelector } from '@/components/ui/theme-selector'
@@ -33,6 +34,7 @@ export default function DoctorDashboardPage() {
     { label: 'Upcoming', icon: Calendar, href: '/doctor/consultations', count: upcoming.length },
     { label: 'Availability', icon: Clock, href: '/doctor/availability' },
     { label: 'Patient History', icon: History, href: '/doctor/history', count: completed.length },
+    { label: 'Earnings', icon: Wallet, href: '/doctor/earnings' },
   ]
 
   return (
