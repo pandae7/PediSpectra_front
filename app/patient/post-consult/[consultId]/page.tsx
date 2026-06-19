@@ -95,7 +95,7 @@ export default function PatientPostConsultPage() {
               </p>
               <ul className="mt-2 space-y-1 text-sm text-foreground">
                 <li>• Child has difficulty breathing or lips turn blue</li>
-                <li>• High fever (>103°F) not responding to medication</li>
+                <li>• High fever (above 103°F) not responding to medication</li>
                 <li>• Child becomes unusually drowsy or unresponsive</li>
                 <li>• Severe dehydration (no urine for 8+ hours)</li>
                 <li>• Any seizure or convulsion</li>
