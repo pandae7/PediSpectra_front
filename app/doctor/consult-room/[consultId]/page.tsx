@@ -36,7 +36,7 @@ export default function DoctorConsultRoomPage() {
 
   const [micOn, setMicOn] = useState(true)
   const [cameraOn, setCameraOn] = useState(true)
-  const [activePanel, setActivePanel] = useState<'notes' | 'whiteboard' | 'growth'>('notes')
+  const [activePanel, setActivePanel] = useState<'notes' | 'whiteboard' | 'growth' | 'files'>('notes')
   const [timer, setTimer] = useState(0)
   const [notesSaved, setNotesSaved] = useState(false)
   const [roomUrl, setRoomUrl] = useState<string | null>(null)
@@ -191,12 +191,11 @@ export default function DoctorConsultRoomPage() {
         </div>
       </header>
 
-      {/* Main layout: Video | Notes | Sidebar */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* LEFT: Video / Whiteboard (60%) */}
-        <div className="flex w-[60%] flex-col border-r border-border">
+      {/* Main layout: Desktop = 3 columns | Mobile = stacked */}
+      <div className="flex flex-1 flex-col overflow-hidden lg:flex-row">
+        {/* VIDEO PANEL — full width on mobile, 60% on desktop */}
+        <div className="flex h-[40vh] flex-col border-b border-border lg:h-auto lg:w-[60%] lg:border-b-0 lg:border-r">
           <div className="relative flex-1 bg-muted/10">
-            {/* Video area — always visible */}
             <div className="h-full w-full">
               {videoLoading ? (
                 <div className="flex h-full items-center justify-center">
@@ -215,8 +214,8 @@ export default function DoctorConsultRoomPage() {
               ) : (
                 <div className="flex h-full items-center justify-center">
                   <div className="text-center max-w-sm">
-                    <div className="mx-auto flex h-28 w-28 items-center justify-center rounded-full bg-primary/10">
-                      <span className="text-4xl font-bold text-primary">
+                    <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-primary/10 lg:h-28 lg:w-28">
+                      <span className="text-2xl font-bold text-primary lg:text-4xl">
                         {consult.childName.charAt(0)}
                       </span>
                     </div>
@@ -285,15 +284,15 @@ export default function DoctorConsultRoomPage() {
           </div>
         </div>
 
-        {/* CENTER: Doctor Notes / Whiteboard (25%) */}
-        <div className="flex w-[25%] flex-col border-r border-border">
+        {/* TOOLS PANEL — full width on mobile (below video), 25% on desktop */}
+        <div className="flex flex-1 flex-col border-b border-border lg:w-[25%] lg:flex-none lg:border-b-0 lg:border-r">
           <div className="flex items-center justify-between border-b border-border px-3 py-2.5">
             {/* Tab buttons */}
-            <div className="flex gap-1">
+            <div className="flex gap-1 overflow-x-auto">
               <button
                 onClick={() => setActivePanel('notes')}
                 className={cn(
-                  'rounded px-2.5 py-1 text-xs font-medium transition-colors',
+                  'whitespace-nowrap rounded px-2.5 py-1 text-xs font-medium transition-colors',
                   activePanel === 'notes' ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:text-foreground'
                 )}
               >
@@ -302,7 +301,7 @@ export default function DoctorConsultRoomPage() {
               <button
                 onClick={() => setActivePanel('whiteboard')}
                 className={cn(
-                  'rounded px-2.5 py-1 text-xs font-medium transition-colors',
+                  'whitespace-nowrap rounded px-2.5 py-1 text-xs font-medium transition-colors',
                   activePanel === 'whiteboard' ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:text-foreground'
                 )}
               >
@@ -311,11 +310,21 @@ export default function DoctorConsultRoomPage() {
               <button
                 onClick={() => setActivePanel('growth')}
                 className={cn(
-                  'rounded px-2.5 py-1 text-xs font-medium transition-colors',
+                  'whitespace-nowrap rounded px-2.5 py-1 text-xs font-medium transition-colors',
                   activePanel === 'growth' ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:text-foreground'
                 )}
               >
                 Growth
+              </button>
+              {/* Files tab — visible on mobile only (replaces sidebar) */}
+              <button
+                onClick={() => setActivePanel('files')}
+                className={cn(
+                  'whitespace-nowrap rounded px-2.5 py-1 text-xs font-medium transition-colors lg:hidden',
+                  activePanel === 'files' ? 'bg-primary/15 text-primary' : 'text-muted-foreground hover:text-foreground'
+                )}
+              >
+                Files
               </button>
             </div>
             {activePanel === 'notes' && (
@@ -330,17 +339,17 @@ export default function DoctorConsultRoomPage() {
           </div>
 
           {/* Whiteboard panel */}
-          <div className={activePanel === 'whiteboard' ? 'flex-1' : 'hidden'}>
+          <div className={activePanel === 'whiteboard' ? 'flex-1 min-h-[200px]' : 'hidden'}>
             <Whiteboard />
           </div>
 
           {/* Growth chart panel */}
-          <div className={activePanel === 'growth' ? 'flex-1' : 'hidden'}>
+          <div className={activePanel === 'growth' ? 'flex-1 min-h-[200px]' : 'hidden'}>
             <GrowthChart />
           </div>
 
           {/* Notes panel */}
-          <div className={activePanel === 'notes' ? 'flex flex-1 flex-col' : 'hidden'}>
+          <div className={activePanel === 'notes' ? 'flex flex-1 flex-col min-h-[200px]' : 'hidden'}>
             <div className="flex-1 overflow-y-auto p-3">
               <div className="space-y-3">
                 <NoteField
@@ -387,10 +396,45 @@ export default function DoctorConsultRoomPage() {
               </p>
             </div>
           </div>
+
+          {/* Files panel — mobile only */}
+          <div className={activePanel === 'files' ? 'flex flex-1 flex-col min-h-[200px] p-3 lg:hidden' : 'hidden'}>
+            <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase text-muted-foreground">
+              <Users className="h-3.5 w-3.5" />
+              Participants
+            </h3>
+            <div className="mb-4 space-y-2">
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-green-500" />
+                <span className="text-xs text-foreground">{currentDoctor.name}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="h-2 w-2 rounded-full bg-green-500" />
+                <span className="text-xs text-foreground">{consult.patientName}</span>
+              </div>
+            </div>
+            <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase text-muted-foreground">
+              <FileText className="h-3.5 w-3.5" />
+              Patient Files
+            </h3>
+            <div className="space-y-2">
+              {patientFiles.map((file) => (
+                <div
+                  key={file.name}
+                  className="cursor-pointer rounded-lg border border-border bg-background p-2 text-xs text-foreground hover:border-primary/50"
+                >
+                  <div className="flex items-center gap-2">
+                    <FileText className="h-3.5 w-3.5 text-primary" />
+                    <span className="truncate">{file.name}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* RIGHT: Participants + Patient Files (15%) */}
-        <div className="flex w-[15%] min-w-[180px] flex-col">
+        {/* RIGHT SIDEBAR: Participants + Files — desktop only */}
+        <div className="hidden w-[15%] min-w-[180px] flex-col lg:flex">
           {/* Participants */}
           <div className="border-b border-border p-3">
             <h3 className="mb-2 flex items-center gap-1.5 text-xs font-semibold uppercase text-muted-foreground">
