@@ -47,8 +47,10 @@
   --popover: #121a16;
   --popover-foreground: #e8f0ec;
 
-  --primary: #2dd4bf;
-  --primary-foreground: #042f2e;
+  /* Softer, deeper teal — less neon/glowing than the original #2dd4bf,
+     easier on the eyes for long sessions in dark mode. */
+  --primary: #1f9c8a;
+  --primary-foreground: #f0fdfa;
 
   --secondary: #1a2b23;
   --secondary-foreground: #e8f0ec;
@@ -63,7 +65,7 @@
 
   --border: #243d31;
   --input: #243d31;
-  --ring: #2dd4bf;
+  --ring: #1f9c8a;
 
   --radius: 0.75rem;
 }

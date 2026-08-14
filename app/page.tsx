@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Activity,
   Baby,
@@ -22,6 +22,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { ThemeSelector } from '@/components/ui/theme-selector'
+import { cn } from '@/lib/utils'
 
 const SUBSPECIALITIES = [
   { name: 'Cardiology', description: 'Heart defects, murmurs, arrhythmias, and cardiac conditions in children', icon: Heart },
@@ -46,6 +47,16 @@ const SUBSPECIALITIES = [
 
 export default function LandingPage() {
   const [searchQuery, setSearchQuery] = useState('')
+  const [scrolled, setScrolled] = useState(false)
+  const [heroLoaded, setHeroLoaded] = useState(false)
+
+  useEffect(() => {
+    setHeroLoaded(true)
+    const onScroll = () => setScrolled(window.scrollY > 24)
+    onScroll()
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
 
   const filteredSpecialities = searchQuery.trim().length > 0
     ? SUBSPECIALITIES.filter(
@@ -57,84 +68,141 @@ export default function LandingPage() {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* ===== NAVBAR ===== */}
-      <nav className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
-        <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
-          {/* Logo */}
-          <div className="flex items-center gap-2">
-            <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
-              <Home className="h-5 w-5 text-primary-foreground" />
+      {/* ===== HERO SECTION (full-bleed video, floating header on top) ===== */}
+      <section className="relative isolate flex h-[92vh] min-h-[640px] w-full items-center overflow-hidden text-white">
+        {/* Video background */}
+        <video
+          className="absolute inset-0 h-full w-full object-cover"
+          src="/videos/hero-consult.mp4"
+          poster="/images/hero-consult.jpg"
+          autoPlay
+          muted
+          loop
+          playsInline
+        />
+        {/* Legibility overlay — darkens video so white text/header stay readable
+            in both themes without depending on the video's own contrast */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/45 to-black/30" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-transparent to-transparent" />
+
+        {/* ===== FLOATING HEADER (fixed so it stays on top through the whole page) =====
+            Mobile (<768px): spans full width, flush with the top edge (no inset —
+            floating pill spacing feels cramped on small viewports and eats tap-target room).
+            Desktop (md+, 768px+): inset from left 10% / right 10% ("floats" as a pill
+            within the viewport), with a small top margin and rounded corners once inset. */}
+        <nav
+          className={cn(
+            'fixed inset-x-0 top-0 z-50 transition-all duration-300 md:inset-x-[10%] md:top-4 md:rounded-2xl',
+            scrolled
+              ? 'bg-background/80 backdrop-blur-md border-b border-border md:border md:shadow-lg'
+              : 'bg-transparent md:bg-black/10 md:backdrop-blur-sm md:border md:border-white/15'
+          )}
+        >
+          <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
+            {/* Logo */}
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary">
+                <Home className="h-5 w-5 text-primary-foreground" />
+              </div>
+              <span className={cn('text-xl font-bold', scrolled ? 'text-foreground' : 'text-white')}>
+                One Roof <span className="text-primary">Pediatrics</span>
+              </span>
             </div>
-            <span className="text-xl font-bold text-foreground">
-              One Roof <span className="text-primary">Pediatrics</span>
-            </span>
+
+            {/* Nav links — desktop */}
+            <div className="hidden items-center gap-6 md:flex">
+              <a
+                href="/doctors"
+                className={cn('text-sm transition-colors hover:text-primary', scrolled ? 'text-muted-foreground' : 'text-white/85')}
+              >
+                Doctors
+              </a>
+              <a
+                href="#subspecialities"
+                className={cn('text-sm transition-colors hover:text-primary', scrolled ? 'text-muted-foreground' : 'text-white/85')}
+              >
+                Subspecialities
+              </a>
+              <a
+                href="#about"
+                className={cn('text-sm transition-colors hover:text-primary', scrolled ? 'text-muted-foreground' : 'text-white/85')}
+              >
+                About the Team
+              </a>
+              <a
+                href="/patient/consultations"
+                className={cn('text-sm transition-colors hover:text-primary', scrolled ? 'text-muted-foreground' : 'text-white/85')}
+              >
+                My Consultations
+              </a>
+              <a
+                href="/login/doctor"
+                className={cn('text-sm transition-colors hover:text-primary', scrolled ? 'text-muted-foreground' : 'text-white/85')}
+              >
+                Doctor Login
+              </a>
+              <a
+                href="/doctor/onboarding"
+                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
+              >
+                Join as Doctor
+              </a>
+              {/* Theme dropdown */}
+              <ThemeSelector />
+            </div>
+
+            {/* Mobile nav */}
+            <div className="flex items-center gap-2 md:hidden">
+              <ThemeSelector />
+              <a
+                href="/doctors"
+                className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
+              >
+                Book
+              </a>
+            </div>
           </div>
+        </nav>
 
-          {/* Nav links — desktop */}
-          <div className="hidden items-center gap-6 md:flex">
-            <a href="/doctors" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-              Doctors
-            </a>
-            <a href="#subspecialities" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-              Subspecialities
-            </a>
-            <a href="#about" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-              About the Team
-            </a>
-            <a href="/patient/consultations" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-              My Consultations
-            </a>
-            <a href="/login/doctor" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-              Doctor Login
-            </a>
-            <a
-              href="/doctor/onboarding"
-              className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
-            >
-              Join as Doctor
-            </a>
-            {/* Theme dropdown */}
-            <ThemeSelector />
-          </div>
-
-          {/* Mobile nav */}
-          <div className="flex items-center gap-2 md:hidden">
-            <ThemeSelector />
-            <a
-              href="/doctors"
-              className="rounded-lg bg-primary px-3 py-2 text-sm font-medium text-primary-foreground"
-            >
-              Book
-            </a>
-          </div>
-        </div>
-      </nav>
-
-      {/* ===== HERO SECTION ===== */}
-      <section className="relative overflow-hidden px-4 pb-16 pt-20 sm:px-6 sm:pb-24 sm:pt-32 lg:px-8">
-        {/* Background glow */}
-        <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
-          <div className="h-[500px] w-[500px] rounded-full bg-primary/10 blur-[120px]" />
-        </div>
-
-        <div className="relative mx-auto max-w-4xl text-center">
-          <div className="mb-6 inline-flex items-center gap-2 rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-sm text-primary">
+        {/* Hero content, animated in on load */}
+        <div className="relative z-10 mx-auto w-full max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+          <div
+            className={cn(
+              'mb-6 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-sm text-white backdrop-blur-sm transition-all duration-700 ease-out',
+              heroLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
+            )}
+          >
             <Video className="h-4 w-4" />
             Video consultations with top subspecialists
           </div>
 
-          <h1 className="text-4xl font-bold leading-tight tracking-tight text-foreground sm:text-5xl lg:text-6xl">
+          <h1
+            className={cn(
+              'text-4xl font-bold leading-tight tracking-tight text-white drop-shadow-sm sm:text-5xl lg:text-6xl transition-all duration-700 ease-out',
+              heroLoaded ? 'translate-y-0 opacity-100 delay-100' : 'translate-y-6 opacity-0'
+            )}
+          >
             All 18 Pediatric Subspecialties.{' '}
             <span className="text-primary">One Platform.</span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-muted-foreground sm:text-xl">
+          <p
+            className={cn(
+              'mx-auto mt-6 max-w-2xl text-lg leading-relaxed text-white/85 sm:text-xl transition-all duration-700 ease-out delay-150',
+              heroLoaded ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
+            )}
+          >
             Expert pediatric care, accessible to everyone. Connect your child with the right
             specialist — from cardiology to neurology — through a single video consultation platform.
           </p>
 
           {/* CTA buttons */}
-          <div className="mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center">
+          <div
+            className={cn(
+              'mt-10 flex flex-col items-center gap-4 sm:flex-row sm:justify-center transition-all duration-700 ease-out delay-200',
+              heroLoaded ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
+            )}
+          >
             <a
               href="/doctors"
               className="inline-flex h-12 items-center gap-2 rounded-xl bg-primary px-8 text-base font-semibold text-primary-foreground transition-opacity hover:opacity-90"
@@ -144,7 +212,7 @@ export default function LandingPage() {
             </a>
             <a
               href="/doctor/onboarding"
-              className="inline-flex h-12 items-center gap-2 rounded-xl border border-border bg-secondary px-8 text-base font-semibold text-foreground transition-colors hover:bg-accent"
+              className="inline-flex h-12 items-center gap-2 rounded-xl border border-white/30 bg-white/10 px-8 text-base font-semibold text-white backdrop-blur-sm transition-colors hover:bg-white/20"
             >
               <Stethoscope className="h-5 w-5" />
               Onboard as Doctor
@@ -152,19 +220,31 @@ export default function LandingPage() {
           </div>
 
           {/* Stats */}
-          <div className="mx-auto mt-16 grid max-w-lg grid-cols-3 gap-8">
+          <div
+            className={cn(
+              'mx-auto mt-16 grid max-w-lg grid-cols-3 gap-8 transition-all duration-700 ease-out delay-300',
+              heroLoaded ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
+            )}
+          >
             <div>
               <p className="text-3xl font-bold text-primary">18</p>
-              <p className="mt-1 text-sm text-muted-foreground">Subspecialities</p>
+              <p className="mt-1 text-sm text-white/70">Subspecialities</p>
             </div>
             <div>
               <p className="text-3xl font-bold text-primary">50+</p>
-              <p className="mt-1 text-sm text-muted-foreground">Specialist Doctors</p>
+              <p className="mt-1 text-sm text-white/70">Specialist Doctors</p>
             </div>
             <div>
               <p className="text-3xl font-bold text-primary">0</p>
-              <p className="mt-1 text-sm text-muted-foreground">Downloads Needed</p>
+              <p className="mt-1 text-sm text-white/70">Downloads Needed</p>
             </div>
+          </div>
+        </div>
+
+        {/* Scroll cue */}
+        <div className="absolute inset-x-0 bottom-6 z-10 flex justify-center">
+          <div className="h-9 w-6 rounded-full border-2 border-white/40">
+            <div className="mx-auto mt-1.5 h-1.5 w-1 animate-bounce rounded-full bg-white/70" />
           </div>
         </div>
       </section>
