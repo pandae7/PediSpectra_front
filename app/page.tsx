@@ -1,24 +1,28 @@
 'use client'
 
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import {
   Activity,
   Baby,
   Brain,
+  Clock,
   Droplets,
   Eye,
   Heart,
+  HeartHandshake,
   HeartPulse,
   Home,
   MapPin,
   Microscope,
   Pill,
+  Puzzle,
+  Salad,
   Search,
   Shield,
+  ShieldCheck,
   Stethoscope,
   Syringe,
   Users,
-  Video,
   Zap,
 } from 'lucide-react'
 import { ThemeSelector } from '@/components/ui/theme-selector'
@@ -45,10 +49,62 @@ const SUBSPECIALITIES = [
   { name: 'ENT (Otolaryngology)', description: 'Ear infections, tonsillitis, hearing loss, snoring, and airway problems', icon: Stethoscope },
 ]
 
+// "What Parents Can Expect" — benefit-first cards, distinct from the clinical
+// subspeciality list below. Written in parent language (see Specialities.md),
+// each backed by a real photo. Cards without an image yet fall back to an
+// icon-on-gradient placeholder so the section still reads fine before all
+// 6 photos are sourced.
+const BENEFITS = [
+  {
+    title: '24/7 Emergency Guidance',
+    desc: "Not sure if it's urgent? Reach a pediatrician any time of night for guidance on whether to head to the ER or wait it out.",
+    icon: Clock,
+    image: '/images/benefit-247-care.jpg',
+    link: null,
+  },
+  {
+    title: 'Growth & Development Tracking',
+    desc: 'Watch your child\u2019s height, weight and milestones plotted against WHO growth standards \u2014 visible to you and your doctor at every visit.',
+    icon: Activity,
+    image: null,
+    link: { href: '/doctors?subspeciality=Endocrinology', label: 'See a sample' },
+  },
+  {
+    title: 'Nutrition & Diet Help',
+    desc: '"My child doesn\u2019t eat" is a real concern. Get diet plans for fussy eating, allergies, weight gain, and healthy first foods.',
+    icon: Salad,
+    image: null,
+    link: null,
+  },
+  {
+    title: 'Child & Teen Mental Health',
+    desc: 'Anxiety, school stress, low mood, or screen struggles \u2014 confidential counselling for your child and guidance for you.',
+    icon: HeartHandshake,
+    image: null,
+    link: null,
+  },
+  {
+    title: 'Confidential Adolescent Care',
+    desc: 'A private, judgement-free space for 10\u201319 year olds to talk about periods, body changes, and growing up \u2014 without a parent in the room.',
+    icon: ShieldCheck,
+    image: null,
+    link: null,
+  },
+  {
+    title: 'Hospital & Procedure Prep',
+    desc: "Helping children cope with needles, scans, or surgery \u2014 explained in a way they can understand, so fear doesn't take over.",
+    icon: Puzzle,
+    image: null,
+    link: null,
+  },
+]
+
 export default function LandingPage() {
   const [searchQuery, setSearchQuery] = useState('')
   const [scrolled, setScrolled] = useState(false)
   const [heroLoaded, setHeroLoaded] = useState(false)
+  const [benefitsVisible, setBenefitsVisible] = useState(false)
+  const benefitsRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setHeroLoaded(true)
@@ -56,6 +112,22 @@ export default function LandingPage() {
     onScroll()
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  useEffect(() => {
+    const el = benefitsRef.current
+    if (!el) return
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setBenefitsVisible(true)
+          observer.disconnect()
+        }
+      },
+      { threshold: 0.15 }
+    )
+    observer.observe(el)
+    return () => observer.disconnect()
   }, [])
 
   const filteredSpecialities = searchQuery.trim().length > 0
@@ -166,20 +238,10 @@ export default function LandingPage() {
 
         {/* Hero content, animated in on load */}
         <div className="relative z-10 mx-auto w-full max-w-4xl px-4 text-center sm:px-6 lg:px-8">
-          <div
-            className={cn(
-              'mb-6 inline-flex items-center gap-2 rounded-full border border-white/30 bg-white/10 px-4 py-1.5 text-sm text-white backdrop-blur-sm transition-all duration-700 ease-out',
-              heroLoaded ? 'translate-y-0 opacity-100' : 'translate-y-4 opacity-0'
-            )}
-          >
-            <Video className="h-4 w-4" />
-            Video consultations with top subspecialists
-          </div>
-
           <h1
             className={cn(
               'text-4xl font-bold leading-tight tracking-tight text-white drop-shadow-sm sm:text-5xl lg:text-6xl transition-all duration-700 ease-out',
-              heroLoaded ? 'translate-y-0 opacity-100 delay-100' : 'translate-y-6 opacity-0'
+              heroLoaded ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
             )}
           >
             All 18 Pediatric Subspecialties.{' '}
@@ -245,6 +307,68 @@ export default function LandingPage() {
         <div className="absolute inset-x-0 bottom-6 z-10 flex justify-center">
           <div className="h-9 w-6 rounded-full border-2 border-white/40">
             <div className="mx-auto mt-1.5 h-1.5 w-1 animate-bounce rounded-full bg-white/70" />
+          </div>
+        </div>
+      </section>
+
+      {/* ===== WHAT PARENTS CAN EXPECT ===== */}
+      <section ref={benefitsRef} className="px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+        <div className="mx-auto max-w-6xl">
+          <h2 className="text-center text-3xl font-bold text-foreground sm:text-4xl">
+            What Parents Can Expect
+          </h2>
+          <p className="mx-auto mt-4 max-w-2xl text-center text-muted-foreground">
+            Beyond a single consultation — support for everything that comes with raising a healthy child
+          </p>
+
+          <div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+            {BENEFITS.map((benefit, i) => {
+              const Icon = benefit.icon
+              return (
+                <div
+                  key={benefit.title}
+                  className={cn(
+                    'group overflow-hidden rounded-2xl border border-border bg-card transition-all duration-500 ease-out hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5',
+                    benefitsVisible ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
+                  )}
+                  style={{ transitionDelay: benefitsVisible ? `${i * 80}ms` : '0ms' }}
+                >
+                  {/* Image (or gradient+icon placeholder until sourced) */}
+                  <div className="relative h-44 w-full overflow-hidden">
+                    {benefit.image ? (
+                      <img
+                        src={benefit.image}
+                        alt={benefit.title}
+                        className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="flex h-full w-full items-center justify-center bg-gradient-to-br from-primary/15 via-secondary to-primary/5">
+                        <Icon className="h-10 w-10 text-primary/60" />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-5">
+                    <div className="flex items-center gap-2.5">
+                      <Icon className="h-5 w-5 shrink-0 text-primary" />
+                      <h3 className="font-semibold text-foreground">{benefit.title}</h3>
+                    </div>
+                    <div className="mt-2 h-px w-10 bg-primary/40" />
+                    <p className="mt-3 text-sm leading-relaxed text-muted-foreground">
+                      {benefit.desc}
+                    </p>
+                    {benefit.link && (
+                      <a
+                        href={benefit.link.href}
+                        className="mt-4 inline-flex items-center gap-1 text-sm font-medium text-primary hover:underline"
+                      >
+                        {benefit.link.label} →
+                      </a>
+                    )}
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
       </section>
