@@ -15,7 +15,6 @@ import {
   MapPin,
   Microscope,
   Pill,
-  Puzzle,
   Salad,
   Search,
   Shield,
@@ -66,35 +65,35 @@ const BENEFITS = [
     title: 'Growth & Development Tracking',
     desc: 'Watch your child\u2019s height, weight and milestones plotted against WHO growth standards \u2014 visible to you and your doctor at every visit.',
     icon: Activity,
-    image: null,
+    image: '/images/benefit-growth-tracking.jpg',
     link: { href: '/doctors?subspeciality=Endocrinology', label: 'See a sample' },
   },
   {
     title: 'Nutrition & Diet Help',
     desc: '"My child doesn\u2019t eat" is a real concern. Get diet plans for fussy eating, allergies, weight gain, and healthy first foods.',
     icon: Salad,
-    image: null,
+    image: '/images/benefit-nutrition.jpg',
     link: null,
   },
   {
     title: 'Child & Teen Mental Health',
     desc: 'Anxiety, school stress, low mood, or screen struggles \u2014 confidential counselling for your child and guidance for you.',
     icon: HeartHandshake,
-    image: null,
+    image: '/images/benefit-mental-health.jpg',
     link: null,
   },
   {
     title: 'Confidential Adolescent Care',
     desc: 'A private, judgement-free space for 10\u201319 year olds to talk about periods, body changes, and growing up \u2014 without a parent in the room.',
     icon: ShieldCheck,
-    image: null,
+    image: '/images/benefit-teen-counselling.jpg',
     link: null,
   },
   {
-    title: 'Hospital & Procedure Prep',
-    desc: "Helping children cope with needles, scans, or surgery \u2014 explained in a way they can understand, so fear doesn't take over.",
-    icon: Puzzle,
-    image: null,
+    title: 'Postpartum & New Mother Counselling',
+    desc: 'Because a healthy mother is what a healthy baby needs \u2014 breastfeeding support, postnatal mood care, and confidence with a first baby, no judgement.',
+    icon: Baby,
+    image: '/images/benefit-new-mother.jpg',
     link: null,
   },
 ]
@@ -303,12 +302,6 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Scroll cue */}
-        <div className="absolute inset-x-0 bottom-6 z-10 flex justify-center">
-          <div className="h-9 w-6 rounded-full border-2 border-white/40">
-            <div className="mx-auto mt-1.5 h-1.5 w-1 animate-bounce rounded-full bg-white/70" />
-          </div>
-        </div>
       </section>
 
       {/* ===== WHAT PARENTS CAN EXPECT ===== */}
