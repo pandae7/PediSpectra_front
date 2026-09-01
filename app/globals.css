@@ -68,6 +68,11 @@
   --ring: #1f9c8a;
 
   --radius: 0.75rem;
+
+  /* Tells native form controls (e.g. <select> dropdown popups) to render
+     using a dark palette, since their own option list can't be styled
+     with CSS and would otherwise default to a jarring white/light popup. */
+  --select-scheme: dark;
 }
 
 /* ==========================================================
@@ -101,6 +106,8 @@
   --border: #cce8e0;
   --input: #cce8e0;
   --ring: #0d9488;
+
+  --select-scheme: light;
 }
 
 /* ==========================================================
@@ -134,6 +141,8 @@
   --border: #e2d6c8;
   --input: #e2d6c8;
   --ring: #c2654a;
+
+  --select-scheme: light;
 }
 
 @layer base {

@@ -163,10 +163,14 @@ export default function LandingPage() {
             within the viewport), with a small top margin and rounded corners once inset. */}
         <nav
           className={cn(
-            'fixed inset-x-0 top-0 z-50 transition-all duration-300 md:inset-x-[10%] md:top-4 md:rounded-2xl',
+            'fixed inset-x-0 top-0 z-50 transition-all duration-300',
             scrolled
-              ? 'bg-background/80 backdrop-blur-md border-b border-border md:border md:shadow-lg'
-              : 'bg-transparent md:bg-black/10 md:backdrop-blur-sm md:border md:border-white/15'
+              // Scrolled: behaves like a normal full-width sticky header — the
+              // floating "pill" treatment only makes sense hovering over the
+              // hero video, not over regular page content underneath it.
+              ? 'bg-background/80 backdrop-blur-md border-b border-border'
+              // Not scrolled: floats as an inset pill over the hero video (desktop only).
+              : 'bg-transparent md:inset-x-[10%] md:top-4 md:rounded-2xl md:bg-black/10 md:backdrop-blur-sm md:border md:border-white/15'
           )}
         >
           <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6 lg:px-8">
@@ -243,8 +247,8 @@ export default function LandingPage() {
               heroLoaded ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
             )}
           >
-            All 18 Pediatric Subspecialties.{' '}
-            <span className="text-primary">One Platform.</span>
+            No more waiting, wondering, or{' '}
+            <span className="text-primary">guessing.</span>
           </h1>
 
           <p
@@ -253,8 +257,8 @@ export default function LandingPage() {
               heroLoaded ? 'translate-y-0 opacity-100' : 'translate-y-6 opacity-0'
             )}
           >
-            Expert pediatric care, accessible to everyone. Connect your child with the right
-            specialist — from cardiology to neurology — through a single video consultation platform.
+            Know exactly which specialist your child needs. All 18 pediatric subspecialties
+            under one roof — practicing evidence-based medicine, guided by current global standards.
           </p>
 
           {/* CTA buttons */}
@@ -422,7 +426,15 @@ export default function LandingPage() {
               {/* Location dropdown */}
               <div className="flex items-center gap-1 rounded-xl border border-border bg-card px-3">
                 <MapPin className="h-4 w-4 text-primary" />
-                <select className="h-12 bg-transparent text-sm text-foreground focus:outline-none">
+                {/* Note: the dropdown's own option list is rendered natively by the
+                    browser and can't be fully re-themed with CSS. `color-scheme`
+                    tells the browser to render that native popup using a light or
+                    dark palette (matching --select-scheme, set per theme in
+                    globals.css) instead of always defaulting to light. */}
+                <select
+                  className="h-12 bg-transparent text-sm text-foreground focus:outline-none"
+                  style={{ colorScheme: 'var(--select-scheme)' }}
+                >
                   <option>All Locations</option>
                   <option>Bangalore</option>
                   <option>Chennai</option>
