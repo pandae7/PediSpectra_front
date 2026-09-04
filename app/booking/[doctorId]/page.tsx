@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Calendar, Check, Clock } from 'lucide-react'
 import { getDoctors, initializeMockData, type DoctorProfile } from '@/lib/mock-data'
+import { usePatient } from '@/lib/patient-context'
 import { cn } from '@/lib/utils'
 
 const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -27,6 +28,7 @@ function BookingContent() {
   const params = useParams()
   const router = useRouter()
   const doctorId = params.doctorId as string
+  const { currentPatient, isLoading: patientLoading } = usePatient()
 
   const [doctor, setDoctor] = useState<DoctorProfile | null>(null)
   const [selectedDate, setSelectedDate] = useState<Date | null>(null)
@@ -40,6 +42,20 @@ function BookingContent() {
     const found = docs.find((d) => d.id === doctorId)
     if (found) setDoctor(found)
   }, [doctorId])
+
+  useEffect(() => {
+    if (!patientLoading && !currentPatient) {
+      router.replace(`/login/patient?returnTo=${encodeURIComponent(`/booking/${doctorId}`)}`)
+    }
+  }, [patientLoading, currentPatient, doctorId, router])
+
+  if (patientLoading || !currentPatient) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    )
+  }
 
   if (!doctor) {
     return (

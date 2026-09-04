@@ -25,6 +25,7 @@ import {
   Zap,
 } from 'lucide-react'
 import { ThemeSelector } from '@/components/ui/theme-selector'
+import { LanguageSelector } from '@/components/ui/language-selector'
 import { cn } from '@/lib/utils'
 
 const SUBSPECIALITIES = [
@@ -222,12 +223,15 @@ export default function LandingPage() {
               >
                 Join as Doctor
               </a>
+              {/* Language dropdown */}
+              <LanguageSelector />
               {/* Theme dropdown */}
               <ThemeSelector />
             </div>
 
             {/* Mobile nav */}
             <div className="flex items-center gap-2 md:hidden">
+              <LanguageSelector />
               <ThemeSelector />
               <a
                 href="/doctors"

@@ -4,6 +4,7 @@ import { useState, useEffect, Suspense } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, CreditCard, CheckCircle, Shield, Smartphone } from 'lucide-react'
 import { getDoctors, addConsultation, initializeMockData, type DoctorProfile } from '@/lib/mock-data'
+import { usePatient } from '@/lib/patient-context'
 import { cn } from '@/lib/utils'
 
 function PaymentContent() {
@@ -13,6 +14,7 @@ function PaymentContent() {
   const doctorId = params.doctorId as string
   const date = searchParams.get('date') || ''
   const time = searchParams.get('time') || ''
+  const { currentPatient, isLoading: patientLoading } = usePatient()
 
   const [doctor, setDoctor] = useState<DoctorProfile | null>(null)
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card'>('upi')
@@ -26,6 +28,21 @@ function PaymentContent() {
     if (found) setDoctor(found)
   }, [doctorId])
 
+  useEffect(() => {
+    if (!patientLoading && !currentPatient) {
+      const returnTo = `/booking/${doctorId}/payment?${searchParams.toString()}`
+      router.replace(`/login/patient?returnTo=${encodeURIComponent(returnTo)}`)
+    }
+  }, [patientLoading, currentPatient, doctorId, router, searchParams])
+
+  if (patientLoading || !currentPatient) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-background">
+        <p className="text-muted-foreground">Loading...</p>
+      </div>
+    )
+  }
+
   if (!doctor) return null
 
   const handlePay = () => {
@@ -37,8 +54,8 @@ function PaymentContent() {
       const newConsultation = {
         id: `consult-${Date.now()}`,
         doctorId: doctor.id,
-        patientName: 'Demo Patient',
-        childName: 'Demo Child',
+        patientName: currentPatient.parentName,
+        childName: currentPatient.children[0]?.name || 'Child',
         subspeciality: doctor.subspeciality,
         date,
         time,

@@ -2,6 +2,8 @@ import type { Metadata } from 'next'
 import { Geist, Geist_Mono } from 'next/font/google'
 import { ThemeProvider } from '@/lib/theme-context'
 import { DoctorProvider } from '@/lib/doctor-context'
+import { PatientProvider } from '@/lib/patient-context'
+import { LanguageProvider } from '@/lib/language-context'
 import './globals.css'
 
 const geistSans = Geist({ variable: '--font-geist-sans', subsets: ['latin'] })
@@ -37,7 +39,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="font-sans antialiased bg-background text-foreground">
         <ThemeProvider>
           <DoctorProvider>
-            {children}
+            <PatientProvider>
+              <LanguageProvider>
+                {children}
+              </LanguageProvider>
+            </PatientProvider>
           </DoctorProvider>
         </ThemeProvider>
       </body>
