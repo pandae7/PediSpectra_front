@@ -2,13 +2,53 @@
 
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
-import { ArrowLeft, Filter, MapPin, Search, Star, Stethoscope } from 'lucide-react'
+import { ArrowLeft, Filter, MapPin, Search, Stethoscope } from 'lucide-react'
 import { getDoctors, initializeMockData, SUBSPECIALITIES, type DoctorProfile } from '@/lib/mock-data'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
+import { HeartRating } from '@/components/ui/heart-rating'
 import { cn } from '@/lib/utils'
 
 const CITIES = ['All Locations', 'Bangalore', 'Chennai', 'Hyderabad', 'Mumbai', 'Delhi', 'Mysuru', 'Hubli', 'Mangaluru', 'Pune', 'Kolkata', 'Kochi']
+
+function DoctorCard({ doc }: { doc: DoctorProfile }) {
+  const [imgFailed, setImgFailed] = useState(false)
+
+  return (
+    <a
+      href={`/doctors/${doc.id}`}
+      className="group rounded-xl border border-border bg-card p-5 transition-all duration-300 hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/5"
+    >
+      <div className="flex items-start gap-4">
+        {doc.imageUrl && !imgFailed ? (
+          <img
+            src={doc.imageUrl}
+            alt={doc.name}
+            className="h-14 w-14 shrink-0 rounded-full object-cover"
+            onError={() => setImgFailed(true)}
+          />
+        ) : (
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+            <span className="text-lg font-bold">{doc.name.split(' ').map(n => n[0]).join('').slice(0, 2)}</span>
+          </div>
+        )}
+        <div className="flex-1">
+          <h3 className="font-semibold text-foreground group-hover:text-primary">{doc.name}</h3>
+          <p className="text-sm text-muted-foreground">{doc.subspeciality}</p>
+          <div className="mt-2 flex items-center gap-3 text-sm">
+            <HeartRating value={doc.rating} showValue size="sm" />
+            <span className="text-muted-foreground">{doc.yearsExperience} yrs</span>
+            <span className="text-muted-foreground">₹{doc.fee}</span>
+          </div>
+          <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
+            <MapPin className="h-3 w-3" />
+            {doc.city} · {doc.workingHospital}
+          </div>
+        </div>
+      </div>
+    </a>
+  )
+}
 
 function DoctorsListContent() {
   const searchParams = useSearchParams()
@@ -16,7 +56,9 @@ function DoctorsListContent() {
 
   const [doctors, setDoctors] = useState<DoctorProfile[]>([])
   const [selectedCity, setSelectedCity] = useState('All Locations')
-  const [filterSubspeciality, setFilterSubspeciality] = useState(subspecialityParam)
+  const [filterSubspeciality, setFilterSubspeciality] = useState(
+    SUBSPECIALITIES.includes(subspecialityParam) ? subspecialityParam : ''
+  )
   const [searchQuery, setSearchQuery] = useState('')
   const [showMobileFilters, setShowMobileFilters] = useState(false)
 
@@ -183,33 +225,7 @@ function DoctorsListContent() {
             ) : (
               <div className="grid gap-4 sm:grid-cols-2">
                 {filtered.map((doc) => (
-                  <a
-                    key={doc.id}
-                    href={`/doctors/${doc.id}`}
-                    className="group rounded-xl border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-md"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                        <span className="text-lg font-bold">{doc.name.split(' ').map(n => n[0]).join('').slice(0, 2)}</span>
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-foreground group-hover:text-primary">{doc.name}</h3>
-                        <p className="text-sm text-muted-foreground">{doc.subspeciality}</p>
-                        <div className="mt-2 flex items-center gap-3 text-sm">
-                          <span className="flex items-center gap-1 text-foreground">
-                            <Star className="h-3.5 w-3.5 fill-primary text-primary" />
-                            {doc.rating}
-                          </span>
-                          <span className="text-muted-foreground">{doc.yearsExperience} yrs</span>
-                          <span className="text-muted-foreground">₹{doc.fee}</span>
-                        </div>
-                        <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
-                          <MapPin className="h-3 w-3" />
-                          {doc.city} · {doc.workingHospital}
-                        </div>
-                      </div>
-                    </div>
-                  </a>
+                  <DoctorCard key={doc.id} doc={doc} />
                 ))}
               </div>
             )}
