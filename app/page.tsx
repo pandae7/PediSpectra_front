@@ -34,25 +34,29 @@ import { Footer } from '@/components/layout/footer'
 import { usePatient } from '@/lib/patient-context'
 import { cn } from '@/lib/utils'
 
+// Aligned with the finalized clinical roster + friendly copy in lib/mock-data.ts
+// (SUBSPECIALITIES / SUBSPECIALITY_META). The `name` MUST match the roster value
+// exactly so the deep-link /doctors?subspeciality=<name> passes the listing's
+// param validation.
 const SUBSPECIALITIES = [
-  { name: 'Cardiology', description: 'Heart defects, murmurs, arrhythmias, and cardiac conditions in children', icon: Heart },
-  { name: 'Neurology', description: 'Seizures, epilepsy, developmental delays, headaches, and neurological disorders', icon: Brain },
-  { name: 'Pulmonology', description: 'Asthma, chronic cough, breathing difficulties, and lung diseases', icon: Activity },
-  { name: 'Gastroenterology', description: 'Digestive issues, chronic abdominal pain, liver diseases, and feeding problems', icon: Pill },
-  { name: 'Nephrology', description: 'Kidney diseases, urinary infections, nephrotic syndrome, and hypertension', icon: Droplets },
-  { name: 'Endocrinology', description: 'Diabetes, growth disorders, thyroid problems, and hormonal imbalances', icon: Zap },
-  { name: 'Hematology', description: 'Anemia, bleeding disorders, thalassemia, and blood-related conditions', icon: HeartPulse },
-  { name: 'Oncology', description: 'Childhood cancers, leukemia, tumors, and long-term follow-up care', icon: Microscope },
-  { name: 'Rheumatology', description: 'Juvenile arthritis, autoimmune disorders, and inflammatory conditions', icon: Shield },
-  { name: 'Infectious Diseases', description: 'Complex infections, tropical diseases, immunodeficiency, and vaccine guidance', icon: Syringe },
-  { name: 'Allergy & Immunology', description: 'Food allergies, eczema, immunodeficiencies, and allergic reactions', icon: Shield },
-  { name: 'Neonatology', description: 'Premature baby care, NICU follow-up, and newborn complications', icon: Baby },
+  { name: 'General Pediatrics & Newborn Care', description: 'Fevers, vaccines, growth checks, and newborn concerns', icon: Baby },
+  { name: 'Pediatric Endocrinology', description: 'Growth disorders, early or delayed puberty, thyroid problems, and diabetes', icon: Zap },
+  { name: 'Pediatric Pulmonology', description: 'Asthma, chronic cough, breathing difficulties, snoring, and lung diseases', icon: Activity },
+  { name: 'Pediatric Neurology', description: 'Seizures, epilepsy, developmental delays, headaches, and neurological disorders', icon: Brain },
+  { name: 'Pediatric Cardiology', description: 'Heart defects, murmurs, arrhythmias, and cardiac conditions in children', icon: Heart },
+  { name: 'Pediatric Gastroenterology', description: 'Digestive issues, chronic abdominal pain, liver diseases, and feeding problems', icon: Pill },
+  { name: 'Pediatric Nephrology', description: 'Kidney diseases, urinary infections, nephrotic syndrome, and hypertension', icon: Droplets },
+  { name: 'Pediatric Hematology-Oncology', description: 'Anemia, bleeding disorders, thalassemia, childhood cancers, and follow-up care', icon: HeartPulse },
+  { name: 'Pediatric Dermatology', description: 'Eczema, birthmarks, skin infections, hair loss, and pediatric skin conditions', icon: Eye },
+  { name: 'Child & Teen Mental Health', description: 'Anxiety, low mood, school stress, sleep problems, and counselling', icon: HeartHandshake },
+  { name: 'Adolescent Health', description: 'A private space for 10-19 year olds: periods, body changes, and confidential counselling', icon: User },
+  { name: 'Pediatric Nutrition', description: 'Fussy eating, poor weight gain, obesity, and condition-specific diet plans', icon: Salad },
+  { name: 'Pediatric Genetics', description: 'Inherited conditions, birth defects, chromosomal disorders, and genetic counselling', icon: Microscope },
+  { name: 'Pediatric Intensive Care', description: 'Post-ICU follow-up, complex-care planning, and urgent danger-sign guidance', icon: HeartPulse },
+  { name: 'Pediatric Rheumatology', description: 'Juvenile arthritis, autoimmune disorders, and inflammatory conditions', icon: Shield },
+  { name: 'Pediatric Infectious Diseases', description: 'Complex infections, tropical diseases, immunodeficiency, and vaccine guidance', icon: Syringe },
+  { name: 'Pediatric Allergy & Immunology', description: 'Food allergies, eczema, immunodeficiencies, and allergic reactions', icon: ShieldCheck },
   { name: 'Developmental Pediatrics', description: 'Autism, ADHD, speech delays, learning disabilities, and behavioral concerns', icon: Brain },
-  { name: 'Pediatric Surgery', description: 'Hernias, undescended testes, congenital anomalies, and surgical consultations', icon: Stethoscope },
-  { name: 'Orthopedics', description: 'Fractures, limping, flat feet, scoliosis, and musculoskeletal problems', icon: Activity },
-  { name: 'Dermatology', description: 'Eczema, birthmarks, skin infections, hair loss, and pediatric skin conditions', icon: Eye },
-  { name: 'Ophthalmology', description: 'Squinting, vision problems, eye infections, and congenital eye conditions', icon: Eye },
-  { name: 'ENT (Otolaryngology)', description: 'Ear infections, tonsillitis, hearing loss, snoring, and airway problems', icon: Stethoscope },
 ]
 
 // "What Parents Can Expect" — benefit-first cards, distinct from the clinical
