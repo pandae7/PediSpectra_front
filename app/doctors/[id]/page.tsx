@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { useParams } from 'next/navigation'
-import { Calendar, Check, Clock, GraduationCap, MapPin, MessageSquare, Share2 } from 'lucide-react'
+import { Award, Calendar, Check, Clock, GraduationCap, MapPin, MessageSquare, Share2, Sparkles } from 'lucide-react'
 import {
   getDoctors,
   getReviewsForDoctor,
@@ -184,6 +184,9 @@ export default function DoctorProfilePage() {
                 <div className="min-w-0">
                   <h2 className="text-2xl font-bold text-foreground">{doctor.name}</h2>
                   <p className="font-medium text-primary">{doctor.subspeciality}</p>
+                  {doctor.tagline && (
+                    <p className="mt-1 text-sm italic text-primary/90 sm:text-base">{doctor.tagline}</p>
+                  )}
                   <div className="mt-2 flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
                     <HeartRating value={doctor.rating} showValue size="md" />
                     <span className="flex items-center gap-1.5">
@@ -210,10 +213,81 @@ export default function DoctorProfilePage() {
                 </div>
               </div>
 
-              {doctor.bio && (
-                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">{doctor.bio}</p>
+              {(doctor.laymanDescription || doctor.bio) && (
+                <p className="mt-4 text-sm leading-relaxed text-muted-foreground">
+                  {doctor.laymanDescription || doctor.bio}
+                </p>
+              )}
+
+              {doctor.hashtags && doctor.hashtags.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-2">
+                  {doctor.hashtags.map((tag, i) => (
+                    <span
+                      key={i}
+                      className="inline-flex items-center rounded-full border border-border bg-background px-2.5 py-0.5 text-xs text-muted-foreground"
+                    >
+                      {tag}
+                    </span>
+                  ))}
+                </div>
               )}
             </div>
+
+            {/* 1b) Beyond the white coat */}
+            {(doctor.interests?.length || doctor.achievements?.length || doctor.catchMeAt) && (
+              <div className="rounded-xl border border-border bg-card p-6">
+                <h2 className="mb-4 flex items-center gap-2 text-base font-semibold text-foreground">
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  Beyond the white coat
+                </h2>
+
+                {doctor.interests?.length ? (
+                  <div>
+                    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      When I&apos;m not in clinic
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {doctor.interests.map((interest, i) => (
+                        <span
+                          key={i}
+                          className="inline-flex items-center rounded-full bg-primary/10 px-2.5 py-0.5 text-xs text-primary"
+                        >
+                          {interest}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                ) : null}
+
+                {doctor.achievements?.length ? (
+                  <div className={doctor.interests?.length ? 'mt-5' : ''}>
+                    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      Recent highlights
+                    </p>
+                    <ul className="space-y-2 text-sm text-foreground">
+                      {doctor.achievements.map((achievement, i) => (
+                        <li key={i} className="flex items-start gap-2">
+                          <Award className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
+                          <span>{achievement}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                ) : null}
+
+                {doctor.catchMeAt ? (
+                  <div className={doctor.interests?.length || doctor.achievements?.length ? 'mt-5' : ''}>
+                    <p className="mb-2 text-xs font-medium uppercase tracking-wider text-muted-foreground">
+                      You can catch me at
+                    </p>
+                    <p className="flex items-center gap-2 text-sm text-foreground">
+                      <MapPin className="h-4 w-4 text-primary" />
+                      {doctor.catchMeAt}
+                    </p>
+                  </div>
+                ) : null}
+              </div>
+            )}
 
             {/* 2) Qualifications & Experience */}
             <div className="rounded-xl border border-border bg-card p-6">
