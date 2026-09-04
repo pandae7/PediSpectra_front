@@ -171,11 +171,11 @@ export default function DoctorProfilePage() {
                   <img
                     src={doctor.imageUrl}
                     alt={doctor.name}
-                    className="h-20 w-20 shrink-0 rounded-full object-cover"
+                    className="h-28 w-28 shrink-0 rounded-full object-cover ring-2 ring-primary/20 sm:h-32 sm:w-32"
                     onError={() => setImgFailed(true)}
                   />
                 ) : (
-                  <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full bg-primary/10 text-2xl font-bold text-primary">
+                  <div className="flex h-28 w-28 shrink-0 items-center justify-center rounded-full bg-primary/10 text-3xl font-bold text-primary ring-2 ring-primary/20 sm:h-32 sm:w-32">
                     {initials}
                   </div>
                 )}
