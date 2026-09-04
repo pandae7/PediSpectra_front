@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { ArrowLeft, CheckCircle, FileText, Upload } from 'lucide-react'
 import { Navbar } from '@/components/layout/navbar'
+import { Footer } from '@/components/layout/footer'
 
 export default function PreConsultFormPage() {
   const router = useRouter()
@@ -227,6 +228,7 @@ export default function PreConsultFormPage() {
           </form>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

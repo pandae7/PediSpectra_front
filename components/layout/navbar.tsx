@@ -78,15 +78,6 @@ export function Navbar({ showBack = false, backHref, backLabel = 'Back' }: Navba
           <a href="/patient/consultations" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
             My Consultations
           </a>
-          <a href="/login/doctor" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
-            Doctor Login
-          </a>
-          <a
-            href="/doctor/onboarding"
-            className="rounded-lg bg-primary px-3.5 py-1.5 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
-          >
-            Join as Doctor
-          </a>
         </div>
 
         {/* Right: Patient profile/login + Theme + Mobile menu */}
@@ -158,12 +149,6 @@ export function Navbar({ showBack = false, backHref, backLabel = 'Back' }: Navba
             </a>
             <a href="/patient/consultations" className="rounded-lg px-3 py-2 text-sm text-foreground hover:bg-muted">
               My Consultations
-            </a>
-            <a href="/login/doctor" className="rounded-lg px-3 py-2 text-sm text-foreground hover:bg-muted">
-              Doctor Login
-            </a>
-            <a href="/doctor/onboarding" className="rounded-lg bg-primary px-3 py-2 text-center text-sm font-medium text-primary-foreground">
-              Join as Doctor
             </a>
 
             <div className="mt-1 border-t border-border pt-3">

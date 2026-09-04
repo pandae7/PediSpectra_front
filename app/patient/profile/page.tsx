@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { Mail, MapPin, Phone, Plus, Trash2, User } from 'lucide-react'
 import { Navbar } from '@/components/layout/navbar'
+import { Footer } from '@/components/layout/footer'
 import { usePatient } from '@/lib/patient-context'
 import type { Child } from '@/lib/patient-data'
 
@@ -183,6 +184,7 @@ export default function PatientProfilePage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

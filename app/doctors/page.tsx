@@ -5,6 +5,7 @@ import { useSearchParams } from 'next/navigation'
 import { ArrowLeft, Filter, MapPin, Search, Star, Stethoscope } from 'lucide-react'
 import { getDoctors, initializeMockData, SUBSPECIALITIES, type DoctorProfile } from '@/lib/mock-data'
 import { Navbar } from '@/components/layout/navbar'
+import { Footer } from '@/components/layout/footer'
 import { cn } from '@/lib/utils'
 
 const CITIES = ['All Locations', 'Bangalore', 'Chennai', 'Hyderabad', 'Mumbai', 'Delhi', 'Mysuru', 'Hubli', 'Mangaluru', 'Pune', 'Kolkata', 'Kochi']
@@ -216,6 +217,7 @@ function DoctorsListContent() {
         </div>
       </div>
       </div>
+      <Footer />
     </div>
   )
 }

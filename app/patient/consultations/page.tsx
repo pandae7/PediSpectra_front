@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'
 import { ArrowLeft, Bell, Calendar, Clock, FileText, Video } from 'lucide-react'
 import { getConsultations, getDoctors, initializeMockData, type Consultation, type DoctorProfile } from '@/lib/mock-data'
 import { Navbar } from '@/components/layout/navbar'
+import { Footer } from '@/components/layout/footer'
 
 export default function PatientConsultationsPage() {
   const router = useRouter()
@@ -163,6 +164,7 @@ export default function PatientConsultationsPage() {
         </section>
       </div>
       </div>
+      <Footer />
     </div>
   )
 }

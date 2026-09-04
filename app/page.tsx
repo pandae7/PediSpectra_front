@@ -1,10 +1,12 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/navigation'
 import {
   Activity,
   Baby,
   Brain,
+  ChevronDown,
   Clock,
   Droplets,
   Eye,
@@ -12,6 +14,7 @@ import {
   HeartHandshake,
   HeartPulse,
   Home,
+  LogOut,
   MapPin,
   Microscope,
   Pill,
@@ -21,11 +24,14 @@ import {
   ShieldCheck,
   Stethoscope,
   Syringe,
+  User,
   Users,
   Zap,
 } from 'lucide-react'
 import { ThemeSelector } from '@/components/ui/theme-selector'
 import { LanguageSelector } from '@/components/ui/language-selector'
+import { Footer } from '@/components/layout/footer'
+import { usePatient } from '@/lib/patient-context'
 import { cn } from '@/lib/utils'
 
 const SUBSPECIALITIES = [
@@ -100,11 +106,16 @@ const BENEFITS = [
 ]
 
 export default function LandingPage() {
+  const router = useRouter()
+  const { currentPatient, logout } = usePatient()
   const [searchQuery, setSearchQuery] = useState('')
   const [scrolled, setScrolled] = useState(false)
   const [heroLoaded, setHeroLoaded] = useState(false)
   const [benefitsVisible, setBenefitsVisible] = useState(false)
+  const [profileOpen, setProfileOpen] = useState(false)
   const benefitsRef = useRef<HTMLDivElement>(null)
+  const profileRef = useRef<HTMLDivElement>(null)
+  const profileRefMobile = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     setHeroLoaded(true)
@@ -113,6 +124,26 @@ export default function LandingPage() {
     window.addEventListener('scroll', onScroll, { passive: true })
     return () => window.removeEventListener('scroll', onScroll)
   }, [])
+
+  // Close profile dropdown on outside click (checks both desktop and mobile controls)
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      const target = e.target as Node
+      const insideDesktop = profileRef.current?.contains(target)
+      const insideMobile = profileRefMobile.current?.contains(target)
+      if (!insideDesktop && !insideMobile) {
+        setProfileOpen(false)
+      }
+    }
+    document.addEventListener('mousedown', handleClick)
+    return () => document.removeEventListener('mousedown', handleClick)
+  }, [])
+
+  const handleSignOut = () => {
+    logout()
+    setProfileOpen(false)
+    router.push('/')
+  }
 
   useEffect(() => {
     const el = benefitsRef.current
@@ -211,18 +242,65 @@ export default function LandingPage() {
               >
                 My Consultations
               </a>
-              <a
-                href="/login/doctor"
-                className={cn('text-sm transition-colors hover:text-primary', scrolled ? 'text-muted-foreground' : 'text-white/85')}
-              >
-                Doctor Login
-              </a>
-              <a
-                href="/doctor/onboarding"
-                className="rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground transition-opacity hover:opacity-90"
-              >
-                Join as Doctor
-              </a>
+              {/* Patient login / profile control */}
+              {currentPatient ? (
+                <div ref={profileRef} className="relative">
+                  <button
+                    onClick={() => setProfileOpen(!profileOpen)}
+                    className={cn(
+                      'flex h-9 items-center gap-2 rounded-lg border px-3 text-sm transition-colors',
+                      scrolled
+                        ? cn(
+                            'border-border text-muted-foreground hover:text-foreground',
+                            profileOpen && 'border-primary text-foreground'
+                          )
+                        : cn(
+                            'border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20',
+                            profileOpen && 'bg-white/20'
+                          )
+                    )}
+                    aria-label="Account menu"
+                    aria-expanded={profileOpen}
+                  >
+                    <User className="h-4 w-4" />
+                    <span>{currentPatient.parentName.split(' ')[0]}</span>
+                    <ChevronDown className="h-3.5 w-3.5" />
+                  </button>
+
+                  {profileOpen && (
+                    <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-xl border border-border bg-card p-2 shadow-xl">
+                      <a
+                        href="/patient/profile"
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-accent"
+                      >
+                        <User className="h-4 w-4" />
+                        My Profile
+                      </a>
+                      <button
+                        onClick={handleSignOut}
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-accent"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <a
+                  href="/login/patient"
+                  className={cn(
+                    'flex h-9 items-center gap-2 rounded-lg border px-3 text-sm transition-colors',
+                    scrolled
+                      ? 'border-border text-muted-foreground hover:text-foreground'
+                      : 'border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20'
+                  )}
+                >
+                  <User className="h-4 w-4" />
+                  Login
+                </a>
+              )}
               {/* Language dropdown */}
               <LanguageSelector />
               {/* Theme dropdown */}
@@ -231,6 +309,63 @@ export default function LandingPage() {
 
             {/* Mobile nav */}
             <div className="flex items-center gap-2 md:hidden">
+              {/* Patient login / profile control */}
+              {currentPatient ? (
+                <div ref={profileRefMobile} className="relative">
+                  <button
+                    onClick={() => setProfileOpen(!profileOpen)}
+                    className={cn(
+                      'flex h-9 w-9 items-center justify-center rounded-lg border transition-colors',
+                      scrolled
+                        ? cn(
+                            'border-border text-muted-foreground hover:text-foreground',
+                            profileOpen && 'border-primary text-foreground'
+                          )
+                        : cn(
+                            'border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20',
+                            profileOpen && 'bg-white/20'
+                          )
+                    )}
+                    aria-label="Account menu"
+                    aria-expanded={profileOpen}
+                  >
+                    <User className="h-4 w-4" />
+                  </button>
+
+                  {profileOpen && (
+                    <div className="absolute right-0 top-full z-50 mt-2 w-48 rounded-xl border border-border bg-card p-2 shadow-xl">
+                      <a
+                        href="/patient/profile"
+                        onClick={() => setProfileOpen(false)}
+                        className="flex items-center gap-2 rounded-lg px-3 py-2.5 text-sm text-foreground transition-colors hover:bg-accent"
+                      >
+                        <User className="h-4 w-4" />
+                        My Profile
+                      </a>
+                      <button
+                        onClick={handleSignOut}
+                        className="flex w-full items-center gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-accent"
+                      >
+                        <LogOut className="h-4 w-4" />
+                        Sign Out
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <a
+                  href="/login/patient"
+                  className={cn(
+                    'flex h-9 w-9 items-center justify-center rounded-lg border transition-colors',
+                    scrolled
+                      ? 'border-border text-muted-foreground hover:text-foreground'
+                      : 'border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20'
+                  )}
+                  aria-label="Login"
+                >
+                  <User className="h-4 w-4" />
+                </a>
+              )}
               <LanguageSelector />
               <ThemeSelector />
               <a
@@ -243,8 +378,11 @@ export default function LandingPage() {
           </div>
         </nav>
 
-        {/* Hero content, animated in on load */}
-        <div className="relative z-10 mx-auto w-full max-w-4xl px-4 text-center sm:px-6 lg:px-8">
+        {/* Hero content, animated in on load.
+            pt-24 (md:pt-28) gives the content top clearance so a two-line
+            headline never rides under the fixed floating header, while the
+            section's items-center keeps it visually centered in the remaining space. */}
+        <div className="relative z-10 mx-auto w-full max-w-4xl px-4 pt-24 text-center sm:px-6 md:pt-28 lg:px-8">
           <h1
             className={cn(
               'text-4xl font-bold leading-tight tracking-tight text-white drop-shadow-sm sm:text-5xl lg:text-6xl transition-all duration-700 ease-out',
@@ -557,25 +695,7 @@ export default function LandingPage() {
       </section>
 
       {/* ===== FOOTER ===== */}
-      <footer className="border-t border-border px-4 py-8 sm:px-6 lg:px-8">
-        <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 sm:flex-row">
-          <div className="flex items-center gap-2">
-            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary">
-              <Home className="h-4 w-4 text-primary-foreground" />
-            </div>
-            <span className="text-sm font-semibold text-foreground">One Roof Pediatrics</span>
-          </div>
-          <p className="text-sm text-muted-foreground">
-            © 2025 One Roof Pediatrics. All rights reserved.
-          </p>
-          <div className="flex gap-4 text-sm text-muted-foreground">
-            <a href="/doctors" className="hover:text-foreground">Find a Doctor</a>
-            <a href="/patient/consultations" className="hover:text-foreground">My Consultations</a>
-            <a href="/login/doctor" className="hover:text-foreground">Doctor Login</a>
-            <a href="/doctor/onboarding" className="hover:text-foreground">Join as Doctor</a>
-          </div>
-        </div>
-      </footer>
+      <Footer />
     </div>
   )
 }

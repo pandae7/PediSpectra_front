@@ -5,6 +5,7 @@ import { useParams } from 'next/navigation'
 import { Calendar, Clock, GraduationCap, Hospital, MapPin, Share2, Star, Stethoscope, Award } from 'lucide-react'
 import { getDoctors, getReviewsForDoctor, initializeMockData, type DoctorProfile, type Review } from '@/lib/mock-data'
 import { Navbar } from '@/components/layout/navbar'
+import { Footer } from '@/components/layout/footer'
 import { cn } from '@/lib/utils'
 
 export default function DoctorProfilePage() {
@@ -231,6 +232,7 @@ export default function DoctorProfilePage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }

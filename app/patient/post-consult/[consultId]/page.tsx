@@ -15,6 +15,7 @@ import {
 } from 'lucide-react'
 import { getConsultations, getDoctors, initializeMockData, type Consultation, type DoctorProfile } from '@/lib/mock-data'
 import { Navbar } from '@/components/layout/navbar'
+import { Footer } from '@/components/layout/footer'
 
 export default function PatientPostConsultPage() {
   const params = useParams()
@@ -204,6 +205,7 @@ export default function PatientPostConsultPage() {
           </div>
         </div>
       </div>
+      <Footer />
     </div>
   )
 }
