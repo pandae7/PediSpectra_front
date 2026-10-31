@@ -14,6 +14,7 @@ import {
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
 import { HeartRating } from '@/components/ui/heart-rating'
+import { cn } from '@/lib/utils'
 
 export default function DoctorProfilePage() {
   const params = useParams()
@@ -79,29 +80,35 @@ export default function DoctorProfilePage() {
       <Navbar showBack backHref="/doctors" backLabel="All Doctors" />
 
       <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
-        {/* A) Cover banner */}
+                {/* A) Cover banner */}
         <div className="relative mt-6 h-48 overflow-hidden rounded-xl border border-border sm:h-56">
-          {/* Gradient fallback — always the base layer */}
-          <div className="absolute inset-0 bg-gradient-to-br from-primary/25 via-primary/10 to-background" />
-
-          {/* Cover image layer (when available and not failed) */}
-          {showCoverImage && (
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              src={meta!.coverImage}
-              alt={meta!.friendlyTitle}
-              className="absolute inset-0 h-full w-full object-cover"
-              onError={() => setCoverFailed(true)}
-            />
+          {showCoverImage ? (
+            <>
+              {/* Solid dark backing so transparent regions of the cover image read as a
+                  consistent dark surface in every theme (not the page background). */}
+              <div className="absolute inset-0 bg-neutral-900" />
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                src={meta!.coverImage}
+                alt={meta!.friendlyTitle}
+                className="absolute inset-0 h-full w-full object-cover"
+                onError={() => setCoverFailed(true)}
+              />
+              {/* Fixed dark left-to-right scrim (theme-independent) so the light cover
+                  text stays legible over the image in both light and dark themes. */}
+              <div className="absolute inset-0 bg-gradient-to-r from-black/85 via-black/45 to-transparent" />
+            </>
+          ) : (
+            <div className="absolute inset-0 bg-gradient-to-br from-neutral-800 via-neutral-900 to-neutral-950" />
           )}
 
-          {/* Scrim for text legibility over any background */}
-          <div className="absolute inset-0 bg-gradient-to-r from-background/90 via-background/50 to-transparent" />
-
-          {/* Share button — top right */}
+          {/* Share button */}
           <button
             onClick={handleShare}
-            className="absolute right-4 top-4 z-10 flex items-center gap-2 rounded-lg border border-border bg-card px-4 py-2 text-sm text-muted-foreground hover:text-foreground"
+            className={cn(
+              'absolute right-4 top-4 z-10 flex items-center gap-2 rounded-lg border px-4 py-2 text-sm transition-colors',
+              'border-white/30 bg-white/10 text-white backdrop-blur-sm hover:bg-white/20'
+            )}
           >
             <Share2 className="h-4 w-4" />
             {copied ? 'Copied!' : 'Share'}
@@ -109,15 +116,22 @@ export default function DoctorProfilePage() {
 
           {/* Cover copy */}
           <div className="absolute inset-y-0 left-0 z-10 flex max-w-xl flex-col justify-center p-6 sm:p-8">
-            <span className="inline-flex w-fit items-center gap-1.5 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-foreground">
+            <span
+              className={cn(
+                'inline-flex w-fit items-center gap-1.5 rounded-full border px-3 py-1 text-xs font-medium backdrop-blur-sm',
+                'border-white/30 bg-white/15 text-white'
+              )}
+            >
               {meta?.icon && <span aria-hidden="true">{meta.icon}</span>}
               {doctor.subspeciality}
             </span>
-            <h1 className="mt-3 text-2xl font-bold text-foreground sm:text-3xl">
+            <h1 className="mt-3 text-2xl font-bold text-white sm:text-3xl">
               {meta?.friendlyTitle ?? doctor.subspeciality}
             </h1>
             {meta?.descriptor && (
-              <p className="mt-2 text-sm leading-relaxed text-muted-foreground">{meta.descriptor}</p>
+              <p className="mt-2 text-sm leading-relaxed text-white/85">
+                {meta.descriptor}
+              </p>
             )}
           </div>
         </div>
