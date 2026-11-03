@@ -674,21 +674,30 @@ export default function LandingPage() {
 
           <div className="mt-12 grid gap-6 sm:grid-cols-3">
             {[
-              { name: 'Dr. Sumithra', role: 'Co-founder & COO', specialty: 'Pediatric Intensivist & Critical Care', image: '/images/team/sumithra.jpg' },
-              { name: 'Dr. Tejaswi Chandra', role: 'Co-founder & CEO', specialty: 'Pediatric Pulmonologist', image: '/images/team/teju-chandra.jpg' },
-              { name: 'Dr. Shamkiran', role: 'Co-founder & CMO', specialty: 'Pediatric Endocrinologist', image: '/images/team/shamkiran.jpg' },
+              { name: 'Dr. Sumithra', role: 'Co-founder & COO', specialty: 'Pediatric Intensivist & Critical Care', image: '/images/team/sumithra.jpg', fit: 'contain' },
+              { name: 'Dr. Tejaswi Chandra', role: 'Co-founder & CEO', specialty: 'Pediatric Pulmonologist', image: '/images/team/teju-chandra.jpg', fit: 'cover' },
+              { name: 'Dr. Shamkiran', role: 'Co-founder & CMO', specialty: 'Pediatric Endocrinologist', image: '/images/team/shamkiran.jpg', fit: 'cover' },
             ].map((member) => (
               <div
                 key={member.role}
-                className="rounded-xl border border-border bg-background p-6 text-center"
+                className="group relative aspect-[3/4] overflow-hidden rounded-2xl border border-border bg-neutral-900 shadow-lg"
               >
-                <div className="mx-auto h-28 w-28 overflow-hidden rounded-full border border-border bg-muted">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img src={member.image} alt={member.name} className="h-full w-full object-cover" />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src={member.image}
+                  alt={member.name}
+                  className={
+                    'absolute inset-0 h-full w-full transition-transform duration-500 group-hover:scale-105 ' +
+                    (member.fit === 'contain' ? 'object-contain' : 'object-cover object-top')
+                  }
+                />
+                {/* Bottom scrim for text legibility (theme-independent) */}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
+                <div className="absolute inset-x-0 bottom-0 p-5 text-left">
+                  <h3 className="text-lg font-bold text-white">{member.name}</h3>
+                  <p className="mt-0.5 text-sm font-semibold text-white/95">{member.role}</p>
+                  <p className="mt-0.5 text-xs text-white/80">{member.specialty}</p>
                 </div>
-                <h3 className="mt-4 font-semibold text-foreground">{member.name}</h3>
-                <p className="mt-1 text-sm font-medium text-primary">{member.role}</p>
-                <p className="mt-1 text-sm text-muted-foreground">{member.specialty}</p>
               </div>
             ))}
           </div>
