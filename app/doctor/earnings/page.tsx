@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowRight, CreditCard, IndianRupee, TrendingUp, Wallet } from 'lucide-react'
 import { useDoctor } from '@/lib/doctor-context'
+import { getPlatformFee } from '@/lib/mock-data'
 import { Navbar } from '@/components/layout/navbar'
 
 export default function DoctorEarningsPage() {
@@ -18,8 +19,8 @@ export default function DoctorEarningsPage() {
 
   const completed = getCompleted()
   const totalConsultations = completed.length
-  const fee = currentDoctor.fee
-  const platformCommission = 0.15 // 15%
+  const fee = getPlatformFee(currentDoctor.subspeciality)
+  const platformCommission = 0.40 // 40%
   const grossEarnings = totalConsultations * fee
   const platformCut = Math.round(grossEarnings * platformCommission)
   const netEarnings = grossEarnings - platformCut
@@ -109,7 +110,7 @@ export default function DoctorEarningsPage() {
               <span className="font-medium text-foreground">₹{grossEarnings.toLocaleString()}</span>
             </div>
             <div className="flex justify-between text-destructive">
-              <span>Platform commission (15%)</span>
+              <span>Platform commission (40%)</span>
               <span>– ₹{platformCut.toLocaleString()}</span>
             </div>
             <div className="flex justify-between border-t border-border pt-3">
@@ -142,7 +143,7 @@ export default function DoctorEarningsPage() {
 
         {/* Payout info */}
         <div className="mt-6 rounded-xl border border-border bg-muted/30 p-4 text-center text-sm text-muted-foreground">
-          Settlements are processed every Monday. Next payout: ₹{pending.toLocaleString()} on Monday.
+          Settlements are processed monthly (after TDS). Next payout: ₹{pending.toLocaleString()}.
         </div>
       </div>
     </div>

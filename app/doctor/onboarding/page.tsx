@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, CheckCircle, Stethoscope } from 'lucide-react'
 import { useDoctor } from '@/lib/doctor-context'
-import { SUBSPECIALITIES } from '@/lib/mock-data'
+import { SUBSPECIALITIES, getPlatformFee } from '@/lib/mock-data'
 
 export default function DoctorOnboardingPage() {
   const router = useRouter()
@@ -30,8 +30,7 @@ export default function DoctorOnboardingPage() {
     Number(form.yearsExperience) >= 0 &&
     Number(form.yearsExperience) <= 60 &&
     form.pgCollege.trim().length > 0 &&
-    form.workingHospital.trim().length > 0 &&
-    form.fee.trim().length > 0
+    form.workingHospital.trim().length > 0
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault()
@@ -44,7 +43,7 @@ export default function DoctorOnboardingPage() {
       yearsExperience: Number(form.yearsExperience),
       pgCollege: form.pgCollege,
       workingHospital: form.workingHospital,
-      fee: Number(form.fee),
+      fee: getPlatformFee(form.subspeciality),
       rating: 4.5,
       consultationCount: 0,
       languages: form.languages.split(',').map((l) => l.trim()).filter(Boolean),
@@ -148,16 +147,14 @@ export default function DoctorOnboardingPage() {
               </div>
               <div>
                 <label className="mb-1.5 block text-sm font-medium text-foreground">
-                  Consultation Fee (₹) <span className="text-destructive">*</span>
+                  Consultation Fee (₹)
                 </label>
-                <input
-                  type="number"
-                  min={0}
-                  value={form.fee}
-                  onChange={(e) => setForm({ ...form, fee: e.target.value })}
-                  placeholder="800"
-                  className="h-11 w-full rounded-lg border border-border bg-background px-3 text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                />
+                <div className="flex h-11 w-full items-center rounded-lg border border-border bg-muted/40 px-3 text-foreground">
+                  {form.subspeciality ? `₹${getPlatformFee(form.subspeciality)}` : '--'}
+                </div>
+                <p className="mt-1 text-[11px] text-muted-foreground">
+                  Set by the platform per specialty (GP ₹500 · specialist ₹750). Doctors cannot change this.
+                </p>
               </div>
             </div>
 

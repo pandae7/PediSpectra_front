@@ -202,6 +202,19 @@ export function getSubspecialityMeta(name: string): SubspecialityMeta | undefine
   return SUBSPECIALITY_META[name]
 }
 
+// --- Platform-set pricing (founders' decision) --------------------------------
+// Fees are set by the platform per specialty tier, NOT by doctors.
+// General Pediatrics (GP) = 500; every other subspecialty (specialist) = 750.
+export const GP_SUBSPECIALITY = 'General Pediatrics & Newborn Care'
+
+export function getPlatformFee(subspeciality: string): number {
+  return subspeciality === GP_SUBSPECIALITY ? 500 : 750
+}
+
+export function getConsultDuration(subspeciality: string): string {
+  return subspeciality === GP_SUBSPECIALITY ? '10-15 min' : '15-30 min'
+}
+
 export const SUBSPECIALITIES = [
   'General Pediatrics & Newborn Care',
   'Pediatric Endocrinology',

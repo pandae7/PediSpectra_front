@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useParams, useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, CreditCard, CheckCircle, Shield, Smartphone } from 'lucide-react'
-import { getDoctors, addConsultation, initializeMockData, type DoctorProfile } from '@/lib/mock-data'
+import { getDoctors, getPlatformFee, addConsultation, initializeMockData, type DoctorProfile } from '@/lib/mock-data'
 import { usePatient } from '@/lib/patient-context'
 import { cn } from '@/lib/utils'
 
@@ -136,7 +136,7 @@ function PaymentContent() {
               </div>
               <div className="mt-3 flex justify-between border-t border-border pt-3">
                 <span className="font-semibold text-foreground">Total</span>
-                <span className="text-lg font-bold text-primary">₹{doctor.fee}</span>
+                <span className="text-lg font-bold text-primary">₹{getPlatformFee(doctor.subspeciality)}</span>
               </div>
             </div>
           </div>
@@ -229,7 +229,7 @@ function PaymentContent() {
                 Processing...
               </span>
             ) : (
-              `Pay ₹${doctor.fee}`
+              `Pay ₹${getPlatformFee(doctor.subspeciality)}`
             )}
           </button>
 

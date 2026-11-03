@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ArrowLeft, Filter, MapPin, Search, Stethoscope } from 'lucide-react'
-import { getDoctors, initializeMockData, SUBSPECIALITIES, type DoctorProfile } from '@/lib/mock-data'
+import { getDoctors, getPlatformFee, initializeMockData, SUBSPECIALITIES, type DoctorProfile } from '@/lib/mock-data'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
 import { HeartRating } from '@/components/ui/heart-rating'
@@ -38,7 +38,7 @@ function DoctorCard({ doc }: { doc: DoctorProfile }) {
           <div className="mt-2 flex items-center gap-3 text-sm">
             <HeartRating value={doc.rating} showValue size="sm" />
             <span className="text-muted-foreground">{doc.yearsExperience} yrs</span>
-            <span className="text-muted-foreground">₹{doc.fee}</span>
+            <span className="text-muted-foreground">₹{getPlatformFee(doc.subspeciality)}</span>
           </div>
           <div className="mt-1 flex items-center gap-1 text-xs text-muted-foreground">
             <MapPin className="h-3 w-3" />

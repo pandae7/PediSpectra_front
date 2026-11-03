@@ -10,6 +10,8 @@ import {
   initializeMockData,
   type DoctorProfile,
   type Review,
+  getPlatformFee,
+  getConsultDuration,
 } from '@/lib/mock-data'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
@@ -216,8 +218,9 @@ export default function DoctorProfilePage() {
 
                 {/* Booking */}
                 <div className="ml-auto text-right">
-                  <p className="text-2xl font-bold text-primary">₹{doctor.fee}</p>
-                  <p className="text-xs text-muted-foreground">Video · 15–30 min</p>
+                  <p className="text-2xl font-bold text-primary">₹{getPlatformFee(doctor.subspeciality)}</p>
+                  <p className="text-xs text-muted-foreground">Video · {getConsultDuration(doctor.subspeciality)}</p>
+                  <p className="mt-1 text-[11px] text-muted-foreground">Fee set by platform · Free follow-up within 3 days (GP) / 5 days (specialist) · Blood-report follow-up ₹250 within 10 days</p>
                   <a
                     href={`/booking/${doctor.id}`}
                     className="mt-3 inline-flex h-11 items-center rounded-xl bg-primary px-5 font-semibold text-primary-foreground transition-opacity hover:opacity-90"

@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Calendar, Check, Clock } from 'lucide-react'
-import { getDoctors, initializeMockData, type DoctorProfile } from '@/lib/mock-data'
+import { getDoctors, getPlatformFee, initializeMockData, type DoctorProfile } from '@/lib/mock-data'
 import { usePatient } from '@/lib/patient-context'
 import { cn } from '@/lib/utils'
 
@@ -112,7 +112,7 @@ function BookingContent() {
             <div>
               <h1 className="text-xl font-bold text-foreground">{doctor.name}</h1>
               <p className="text-sm text-muted-foreground">
-                {doctor.subspeciality} · ₹{doctor.fee} per consultation
+                {doctor.subspeciality} · ₹{getPlatformFee(doctor.subspeciality)} per consultation
               </p>
             </div>
           </div>
@@ -238,8 +238,11 @@ function BookingContent() {
                 onClick={handleProceedToPayment}
                 className="h-11 w-full rounded-lg bg-primary font-semibold text-primary-foreground transition-opacity hover:opacity-90"
               >
-                Proceed to Payment — ₹{doctor.fee}
+                Proceed to Payment — ₹{getPlatformFee(doctor.subspeciality)}
               </button>
+              <p className="mt-2 text-center text-[11px] text-muted-foreground">
+                Free cancellation up to 1 hour before · Reminder 90 minutes before your appointment
+              </p>
             </div>
           )}
         </div>
