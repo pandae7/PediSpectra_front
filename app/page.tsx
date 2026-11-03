@@ -33,6 +33,7 @@ import { LanguageSelector } from '@/components/ui/language-selector'
 import { Footer } from '@/components/layout/footer'
 import { HospitalsMarquee } from '@/components/layout/hospitals-marquee'
 import { NewsCarousel } from '@/components/layout/news-carousel'
+import { SymptomChat } from '@/components/triage/symptom-chat'
 import { usePatient } from '@/lib/patient-context'
 import { cn } from '@/lib/utils'
 
@@ -706,6 +707,9 @@ export default function LandingPage() {
 
       {/* ===== FOOTER ===== */}
       <Footer />
+
+      {/* Floating symptom-to-specialist helper */}
+      <SymptomChat />
     </div>
   )
 }
