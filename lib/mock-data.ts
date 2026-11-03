@@ -117,7 +117,6 @@ export const SUBSPECIALITY_META: Record<string, SubspecialityMeta> = {
     descriptor: "For urine, swelling and kidney concerns.",
     treats: ['Repeated urine infections', 'Swelling of face, legs or body', 'Blood or protein in urine', 'Bedwetting beyond the usual age', 'High blood pressure, kidney stones'],
     icon: '💧',
-    coverImage: '/images/subspecialities/nephrology.png',
   },
   'Pediatric Hematology-Oncology': {
     name: 'Pediatric Hematology-Oncology',
@@ -196,6 +195,32 @@ export const SUBSPECIALITY_META: Record<string, SubspecialityMeta> = {
     treats: ['Not speaking on time, poor eye contact', 'Autism, ADHD, hyperactivity', 'Learning and school difficulties', 'Delayed milestones', 'Tantrums and behaviour concerns'],
     icon: '🧩',
   },
+}
+
+// Attach per-subspecialty cover banners (JPEG). Keyed by exact subspecialty name
+// so every doctor in that subspecialty shows the same banner on their profile.
+const SUBSPECIALITY_COVERS: Record<string, string> = {
+  'General Pediatrics & Newborn Care': '/images/subspecialities/general-pediatrics.jpg',
+  'Pediatric Endocrinology': '/images/subspecialities/endocrinology.jpg',
+  'Pediatric Pulmonology': '/images/subspecialities/pulmonology.jpg',
+  'Pediatric Neurology': '/images/subspecialities/neurology.jpg',
+  'Pediatric Cardiology': '/images/subspecialities/cardiology.jpg',
+  'Pediatric Gastroenterology': '/images/subspecialities/gastroenterology.jpg',
+  'Pediatric Nephrology': '/images/subspecialities/nephrology.jpg',
+  'Pediatric Hematology-Oncology': '/images/subspecialities/hematology-oncology.jpg',
+  'Pediatric Dermatology': '/images/subspecialities/dermatology.jpg',
+  'Child & Teen Mental Health': '/images/subspecialities/mental-health.jpg',
+  'Adolescent Health': '/images/subspecialities/adolescent-health.jpg',
+  'Pediatric Nutrition': '/images/subspecialities/nutrition.jpg',
+  'Pediatric Genetics': '/images/subspecialities/genetics.jpg',
+  'Pediatric Intensive Care': '/images/subspecialities/intensive-care.jpg',
+  'Pediatric Rheumatology': '/images/subspecialities/rheumatology.jpg',
+  'Pediatric Infectious Diseases': '/images/subspecialities/infectious-diseases.jpg',
+  'Pediatric Allergy & Immunology': '/images/subspecialities/allergy-immunology.jpg',
+  'Developmental Pediatrics': '/images/subspecialities/developmental.jpg',
+}
+for (const [name, cover] of Object.entries(SUBSPECIALITY_COVERS)) {
+  if (SUBSPECIALITY_META[name]) SUBSPECIALITY_META[name].coverImage = cover
 }
 
 export function getSubspecialityMeta(name: string): SubspecialityMeta | undefined {
