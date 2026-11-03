@@ -31,6 +31,7 @@ import {
 import { ThemeSelector } from '@/components/ui/theme-selector'
 import { LanguageSelector } from '@/components/ui/language-selector'
 import { Footer } from '@/components/layout/footer'
+import { HospitalsMarquee } from '@/components/layout/hospitals-marquee'
 import { usePatient } from '@/lib/patient-context'
 import { cn } from '@/lib/utils'
 
@@ -453,6 +454,9 @@ export default function LandingPage() {
         </div>
 
       </section>
+
+      {/* ===== HOSPITALS MARQUEE ===== */}
+      <HospitalsMarquee />
 
       {/* ===== WHAT PARENTS CAN EXPECT ===== */}
       <section ref={benefitsRef} className="px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
