@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { Newspaper } from 'lucide-react'
 import { getNews } from '@/lib/mock-data'
 
@@ -18,14 +18,37 @@ export function NewsCarousel() {
   const n = articles.length
   const [active, setActive] = useState(0)
   const [paused, setPaused] = useState(false)
+  const [inView, setInView] = useState(false)
+  const sectionRef = useRef<HTMLElement | null>(null)
 
   const go = useCallback((i: number) => setActive(((i % n) + n) % n), [n])
 
+  // Start rotating only once the section scrolls into view, and reset to the
+  // featured (founder) story at index 0 each time it enters, so the founder's
+  // story is always centered when the visitor actually reaches this section.
   useEffect(() => {
-    if (paused || n <= 1) return
+    const el = sectionRef.current
+    if (!el) return
+    const obs = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setActive(0)
+          setInView(true)
+        } else {
+          setInView(false)
+        }
+      },
+      { threshold: 0.4 }
+    )
+    obs.observe(el)
+    return () => obs.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (!inView || paused || n <= 1) return
     const t = setInterval(() => setActive((a) => (a + 1) % n), ROTATE_MS)
     return () => clearInterval(t)
-  }, [paused, n])
+  }, [inView, paused, n])
 
   const offsetOf = (i: number) => {
     let d = i - active
@@ -35,7 +58,7 @@ export function NewsCarousel() {
   }
 
   return (
-    <section className="relative overflow-hidden px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
+    <section ref={sectionRef} className="relative isolate z-0 overflow-hidden px-4 py-16 sm:px-6 sm:py-24 lg:px-8">
       {/* Theme-adaptive background: soft radial glow + faint dot grid, all from
           theme tokens so it blends with dark-teal, light-sage and earthy-warm. */}
       <div

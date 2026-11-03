@@ -674,32 +674,21 @@ export default function LandingPage() {
 
           <div className="mt-12 grid gap-6 sm:grid-cols-3">
             {[
-              {
-                role: 'Founder & CEO',
-                specialty: 'Pediatric Pulmonologist',
-                desc: 'Clinical network anchor. Driving platform vision and doctor onboarding.',
-              },
-              {
-                role: 'Co-founder & CMO',
-                specialty: 'Pediatric Endocrinologist',
-                desc: 'Medical quality oversight. Designing clinical protocols and safety frameworks.',
-              },
-              {
-                role: 'Co-founder & COO',
-                specialty: 'Pediatric Intensivist',
-                desc: 'Emergency triage logic. Building operational systems and escalation protocols.',
-              },
+              { name: 'Dr. Sumithra', role: 'Co-founder & COO', specialty: 'Pediatric Intensivist & Critical Care', image: '/images/team/sumithra.jpg' },
+              { name: 'Dr. Tejaswi Chandra', role: 'Co-founder & CEO', specialty: 'Pediatric Pulmonologist', image: '/images/team/teju-chandra.jpg' },
+              { name: 'Dr. Shamkiran', role: 'Co-founder & CMO', specialty: 'Pediatric Endocrinologist', image: '/images/team/shamkiran.jpg' },
             ].map((member) => (
               <div
                 key={member.role}
                 className="rounded-xl border border-border bg-background p-6 text-center"
               >
-                <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Stethoscope className="h-7 w-7" />
+                <div className="mx-auto h-28 w-28 overflow-hidden rounded-full border border-border bg-muted">
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img src={member.image} alt={member.name} className="h-full w-full object-cover" />
                 </div>
-                <h3 className="mt-4 font-semibold text-foreground">{member.role}</h3>
-                <p className="mt-1 text-sm font-medium text-primary">{member.specialty}</p>
-                <p className="mt-2 text-sm text-muted-foreground">{member.desc}</p>
+                <h3 className="mt-4 font-semibold text-foreground">{member.name}</h3>
+                <p className="mt-1 text-sm font-medium text-primary">{member.role}</p>
+                <p className="mt-1 text-sm text-muted-foreground">{member.specialty}</p>
               </div>
             ))}
           </div>
