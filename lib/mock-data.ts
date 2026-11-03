@@ -384,3 +384,80 @@ export function getReviews(): Review[] {
 export function getReviewsForDoctor(doctorId: string): Review[] {
   return getReviews().filter((r) => r.doctorId === doctorId).sort((a, b) => b.date.localeCompare(a.date))
 }
+
+
+// --- News / "From One Roof Pediatrics" carousel ------------------------------
+export interface NewsArticle {
+  id: string
+  category: string          // e.g. 'Recognition', 'Doctor Spotlight', 'Success Story'
+  title: string
+  summary: string
+  date: string              // ISO date
+  image?: string            // public path; gradient+icon fallback when absent
+  featured?: boolean        // the lead article shown centered first
+}
+
+export const SEED_NEWS: NewsArticle[] = [
+  {
+    id: 'news-001',
+    category: 'Recognition',
+    title: 'Our Founder Wins First Place at the International Conference of Respiratory Diseases, Bologna',
+    summary: 'Dr. Tejaswi Chandra took first place in the poster presentation for her work on airway stenting as a minimally invasive lifeline for children with tracheobronchial obstruction.',
+    date: '2025-09-20',
+    image: '/images/news/tejaswi-award.jpg',
+    featured: true,
+  },
+  {
+    id: 'news-002',
+    category: 'Doctor Spotlight',
+    title: 'Meet Dr. Deepa Krishnan: Making Kidney Care Less Scary for Kids',
+    summary: 'Our pediatric nephrologist on turning worrying words into simple plans parents can follow at home.',
+    date: '2025-09-10',
+    image: '/images/doctors/dr-010.jpg',
+  },
+  {
+    id: 'news-003',
+    category: 'Success Story',
+    title: 'A Late-Night Video Consult That Reassured a Worried Parent',
+    summary: 'When a fever spiked at midnight, a quick video consult helped one family know exactly what to do next.',
+    date: '2025-08-28',
+    image: '/images/benefit-247-care.jpg',
+  },
+  {
+    id: 'news-004',
+    category: 'Health Tips',
+    title: 'When Is a Fever an Emergency? A Pediatrician Explains',
+    summary: 'Simple, practical guidance on the danger signs worth watching for and when to seek urgent care.',
+    date: '2025-08-15',
+    image: '/images/benefit-mental-health.jpg',
+  },
+  {
+    id: 'news-005',
+    category: 'Milestone',
+    title: 'All 18 Pediatric Subspecialties, Now Under One Roof',
+    summary: 'From newborn care to adolescent health, every specialist your child may ever need is now a video call away.',
+    date: '2025-08-01',
+    image: '/images/hero-consult.jpg',
+  },
+  {
+    id: 'news-006',
+    category: 'Parent Education',
+    title: 'Growth Tracking: What the Percentile Curves Actually Mean',
+    summary: 'A plain-language guide to reading your child growth chart without the worry.',
+    date: '2025-07-20',
+    image: '/images/benefit-growth-tracking.jpg',
+  },
+]
+
+export function getNews(): NewsArticle[] {
+  // Featured article first, then most-recent by date.
+  return [...SEED_NEWS].sort((a, b) => {
+    if (a.featured && !b.featured) return -1
+    if (b.featured && !a.featured) return 1
+    return b.date.localeCompare(a.date)
+  })
+}
+
+export function getNewsArticle(id: string): NewsArticle | undefined {
+  return SEED_NEWS.find((n) => n.id === id)
+}
