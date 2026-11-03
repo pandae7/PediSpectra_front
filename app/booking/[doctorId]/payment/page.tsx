@@ -14,7 +14,7 @@ function PaymentContent() {
   const doctorId = params.doctorId as string
   const date = searchParams.get('date') || ''
   const time = searchParams.get('time') || ''
-  const { currentPatient, isLoading: patientLoading } = usePatient()
+  const { currentPatient, activeChild, isLoading: patientLoading } = usePatient()
 
   const [doctor, setDoctor] = useState<DoctorProfile | null>(null)
   const [paymentMethod, setPaymentMethod] = useState<'upi' | 'card'>('upi')
@@ -55,7 +55,8 @@ function PaymentContent() {
         id: `consult-${Date.now()}`,
         doctorId: doctor.id,
         patientName: currentPatient.parentName,
-        childName: currentPatient.children[0]?.name || 'Child',
+        childId: activeChild?.id,
+        childName: activeChild?.name || currentPatient.children[0]?.name || 'Child',
         subspeciality: doctor.subspeciality,
         date,
         time,

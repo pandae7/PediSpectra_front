@@ -23,6 +23,7 @@ export interface PatientProfile {
 
 const PATIENTS_KEY = 'pedispectra-patients'
 export const CURRENT_PATIENT_KEY = 'pedispectra-current-patient'
+export const ACTIVE_CHILD_KEY = 'pedispectra-active-child'
 
 export function getPatients(): PatientProfile[] {
   if (typeof window === 'undefined') return []

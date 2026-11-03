@@ -35,6 +35,7 @@ export interface Consultation {
   id: string
   doctorId: string
   patientName: string
+  childId?: string
   childName: string
   subspeciality: string
   date: string

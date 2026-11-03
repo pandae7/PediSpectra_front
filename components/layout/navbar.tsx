@@ -7,6 +7,7 @@ import { LanguageSelector } from '@/components/ui/language-selector'
 import { useState, useRef, useEffect } from 'react'
 import { cn } from '@/lib/utils'
 import { usePatient } from '@/lib/patient-context'
+import { ChildSwitcher } from '@/components/layout/child-switcher'
 
 interface NavbarProps {
   showBack?: boolean
@@ -82,6 +83,11 @@ export function Navbar({ showBack = false, backHref, backLabel = 'Back' }: Navba
 
         {/* Right: Patient profile/login + Theme + Mobile menu */}
         <div className="flex items-center gap-2">
+          {currentPatient && (
+            <div className="hidden md:block">
+              <ChildSwitcher />
+            </div>
+          )}
           {currentPatient ? (
             <div ref={profileRef} className="relative hidden md:block">
               <button
@@ -154,6 +160,9 @@ export function Navbar({ showBack = false, backHref, backLabel = 'Back' }: Navba
             <div className="mt-1 border-t border-border pt-3">
               {currentPatient ? (
                 <>
+                  <div className="px-1 pb-2">
+                    <ChildSwitcher />
+                  </div>
                   <a href="/patient/profile" className="flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-foreground hover:bg-muted">
                     <User className="h-4 w-4" />
                     My Profile ({currentPatient.parentName.split(' ')[0]})

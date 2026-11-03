@@ -6,9 +6,11 @@ import { ArrowLeft, Bell, Calendar, Clock, FileText, Video } from 'lucide-react'
 import { getConsultations, getDoctors, initializeMockData, type Consultation, type DoctorProfile } from '@/lib/mock-data'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
+import { usePatient } from '@/lib/patient-context'
 
 export default function PatientConsultationsPage() {
   const router = useRouter()
+  const { activeChild } = usePatient()
   const [consultations, setConsultations] = useState<Consultation[]>([])
   const [doctors, setDoctors] = useState<DoctorProfile[]>([])
 
@@ -18,11 +20,15 @@ export default function PatientConsultationsPage() {
     setDoctors(getDoctors())
   }, [])
 
-  const upcoming = consultations
+  const childConsultations = activeChild
+    ? consultations.filter((c) => c.childId === activeChild.id)
+    : consultations
+
+  const upcoming = childConsultations
     .filter((c) => c.status === 'upcoming')
     .sort((a, b) => `${a.date} ${a.time}`.localeCompare(`${b.date} ${b.time}`))
 
-  const completed = consultations
+  const completed = childConsultations
     .filter((c) => c.status === 'completed')
     .sort((a, b) => b.date.localeCompare(a.date))
 

@@ -3,14 +3,18 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react'
 import {
   type PatientProfile,
+  type Child,
   getPatients,
   addPatient,
   updatePatient,
   CURRENT_PATIENT_KEY,
+  ACTIVE_CHILD_KEY,
 } from './patient-data'
 
 interface PatientContextValue {
   currentPatient: PatientProfile | null
+  activeChild: Child | null
+  setActiveChild: (childId: string) => void
   isLoading: boolean
   login: (patient: PatientProfile) => void
   logout: () => void
@@ -22,6 +26,7 @@ const PatientContext = createContext<PatientContextValue | null>(null)
 
 export function PatientProvider({ children }: { children: ReactNode }) {
   const [currentPatient, setCurrentPatientState] = useState<PatientProfile | null>(null)
+  const [activeChildId, setActiveChildId] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
@@ -31,7 +36,12 @@ export function PatientProvider({ children }: { children: ReactNode }) {
       if (savedId) {
         const patients = getPatients()
         const patient = patients.find((p) => p.id === savedId)
-        if (patient) setCurrentPatientState(patient)
+        if (patient) {
+          setCurrentPatientState(patient)
+          const savedChild = localStorage.getItem(ACTIVE_CHILD_KEY)
+          const validChild = patient.children.find((ch) => ch.id === savedChild)
+          setActiveChildId(validChild ? validChild.id : patient.children[0]?.id ?? null)
+        }
       }
     } catch {}
     setIsLoading(false)
@@ -39,15 +49,27 @@ export function PatientProvider({ children }: { children: ReactNode }) {
 
   const login = (patient: PatientProfile) => {
     setCurrentPatientState(patient)
+    const firstChild = patient.children[0]?.id ?? null
+    setActiveChildId(firstChild)
     try {
       localStorage.setItem(CURRENT_PATIENT_KEY, patient.id)
+      if (firstChild) localStorage.setItem(ACTIVE_CHILD_KEY, firstChild)
+    } catch {}
+  }
+
+  const setActiveChild = (childId: string) => {
+    setActiveChildId(childId)
+    try {
+      localStorage.setItem(ACTIVE_CHILD_KEY, childId)
     } catch {}
   }
 
   const logout = () => {
     setCurrentPatientState(null)
+    setActiveChildId(null)
     try {
       localStorage.removeItem(CURRENT_PATIENT_KEY)
+      localStorage.removeItem(ACTIVE_CHILD_KEY)
     } catch {}
   }
 
@@ -67,10 +89,17 @@ export function PatientProvider({ children }: { children: ReactNode }) {
     setCurrentPatientState(profile)
   }
 
+  const activeChild =
+    currentPatient?.children.find((ch) => ch.id === activeChildId) ??
+    currentPatient?.children[0] ??
+    null
+
   return (
     <PatientContext.Provider
       value={{
         currentPatient,
+        activeChild,
+        setActiveChild,
         isLoading,
         login,
         logout,
