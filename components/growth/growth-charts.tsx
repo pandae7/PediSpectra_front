@@ -10,6 +10,7 @@ import {
   ResponsiveContainer,
 } from 'recharts'
 import type { Child } from '@/lib/patient-data'
+import { getGrowthColor } from '@/lib/child-theme'
 import {
   buildReferenceRows,
   referenceAt,
@@ -53,6 +54,7 @@ function latestFor(child: Child, key: 'weightKg' | 'heightCm') {
 const AXIS_TICK = { fill: 'var(--muted-foreground)', fontSize: 12 }
 
 export function GrowthCharts({ child }: { child: Child }) {
+  const color = getGrowthColor(child.sex)
   return (
     <div className="space-y-6">
       {METRICS.map(({ metric, title, unit, key }) => {
@@ -62,7 +64,11 @@ export function GrowthCharts({ child }: { child: Child }) {
         const hasPoints = (child.measurements ?? []).some((m) => m[key] !== undefined)
 
         return (
-          <div key={metric} className="rounded-xl border border-border bg-card p-5">
+          <div
+            key={metric}
+            className="rounded-xl border border-border bg-card p-5"
+            style={{ borderTop: `3px solid ${color}` }}
+          >
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div>
                 <h3 className="font-semibold text-foreground">{title}</h3>
@@ -71,7 +77,11 @@ export function GrowthCharts({ child }: { child: Child }) {
                 </p>
               </div>
               {latest && est && (
-                <div className="rounded-lg border border-primary/30 bg-primary/10 px-3 py-2 text-right">
+                <div className="rounded-lg border px-3 py-2 text-right"
+                  style={{
+                    borderColor: `color-mix(in srgb, ${color} 40%, transparent)`,
+                    background: `color-mix(in srgb, ${color} 12%, transparent)`,
+                  }}>
                   <p className="text-sm font-semibold text-foreground">
                     {latest[key]} {unit}
                   </p>
@@ -104,17 +114,17 @@ export function GrowthCharts({ child }: { child: Child }) {
                     }}
                     labelFormatter={(v) => `Age ${v} yrs`}
                   />
-                  <Line dataKey="p97" name="97th" stroke="var(--muted-foreground)" strokeDasharray="4 4" strokeWidth={1} dot={false} isAnimationActive={false} />
-                  <Line dataKey="p85" name="85th" stroke="var(--muted-foreground)" strokeDasharray="2 4" strokeWidth={1} strokeOpacity={0.7} dot={false} isAnimationActive={false} />
-                  <Line dataKey="p50" name="50th" stroke="var(--muted-foreground)" strokeWidth={1.5} dot={false} isAnimationActive={false} />
-                  <Line dataKey="p15" name="15th" stroke="var(--muted-foreground)" strokeDasharray="2 4" strokeWidth={1} strokeOpacity={0.7} dot={false} isAnimationActive={false} />
-                  <Line dataKey="p3" name="3rd" stroke="var(--muted-foreground)" strokeDasharray="4 4" strokeWidth={1} dot={false} isAnimationActive={false} />
+                  <Line dataKey="p97" name="97th" stroke={color} strokeOpacity={0.55} strokeDasharray="4 4" strokeWidth={1} dot={false} isAnimationActive={false} />
+                  <Line dataKey="p85" name="85th" stroke={color} strokeDasharray="2 4" strokeWidth={1} strokeOpacity={0.4} dot={false} isAnimationActive={false} />
+                  <Line dataKey="p50" name="50th" stroke={color} strokeOpacity={0.8} strokeWidth={1.5} dot={false} isAnimationActive={false} />
+                  <Line dataKey="p15" name="15th" stroke={color} strokeDasharray="2 4" strokeWidth={1} strokeOpacity={0.4} dot={false} isAnimationActive={false} />
+                  <Line dataKey="p3" name="3rd" stroke={color} strokeOpacity={0.55} strokeDasharray="4 4" strokeWidth={1} dot={false} isAnimationActive={false} />
                   <Line
                     dataKey="child"
                     name={child.name}
-                    stroke="var(--primary)"
+                    stroke={color}
                     strokeWidth={3}
-                    dot={{ r: 4, fill: 'var(--primary)' }}
+                    dot={{ r: 4, fill: color }}
                     activeDot={{ r: 6 }}
                     connectNulls
                     isAnimationActive={false}
