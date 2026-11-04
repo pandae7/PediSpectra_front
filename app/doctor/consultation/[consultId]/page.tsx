@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import {
   ArrowLeft,
@@ -16,6 +16,8 @@ import {
 } from 'lucide-react'
 import { useDoctor } from '@/lib/doctor-context'
 import { Navbar } from '@/components/layout/navbar'
+import { GrowthCharts } from '@/components/growth/growth-charts'
+import { getPatients, type Child } from '@/lib/patient-data'
 
 export default function ConsultationDetailPage() {
   const router = useRouter()
@@ -26,6 +28,24 @@ export default function ConsultationDetailPage() {
   useEffect(() => {
     if (!isLoading && !currentDoctor) router.push('/login/doctor')
   }, [currentDoctor, isLoading, router])
+
+  // Look up the patient's child (and growth data) via the consultation's childId.
+  const consultChildId = (consultations ?? []).find((c) => c.id === consultId)?.childId
+  const [growthChild, setGrowthChild] = useState<Child | null>(null)
+  useEffect(() => {
+    if (!consultChildId) {
+      setGrowthChild(null)
+      return
+    }
+    for (const p of getPatients()) {
+      const ch = p.children.find((x) => x.id === consultChildId)
+      if (ch) {
+        setGrowthChild(ch)
+        return
+      }
+    }
+    setGrowthChild(null)
+  }, [consultChildId])
 
   if (isLoading || !currentDoctor) return null
 
@@ -204,6 +224,18 @@ export default function ConsultationDetailPage() {
               )}
             </div>
           </div>
+        </div>
+
+        {/* Growth chart for this child */}
+        <div className="mt-6">
+          <h2 className="mb-3 text-base font-semibold text-foreground">Growth Chart</h2>
+          {growthChild ? (
+            <GrowthCharts child={growthChild} />
+          ) : (
+            <div className="rounded-xl border border-border bg-card p-6 text-sm text-muted-foreground">
+              No growth measurements on file for this patient.
+            </div>
+          )}
         </div>
       </div>
     </div>

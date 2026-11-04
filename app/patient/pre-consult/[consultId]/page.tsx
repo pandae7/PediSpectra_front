@@ -1,15 +1,28 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter, useParams } from 'next/navigation'
 import { ArrowLeft, CheckCircle, FileText, Upload } from 'lucide-react'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
+import { usePatient } from '@/lib/patient-context'
+import { getConsultations } from '@/lib/mock-data'
+import type { Measurement } from '@/lib/patient-data'
 
 export default function PreConsultFormPage() {
   const router = useRouter()
   const params = useParams()
   const consultId = params.consultId as string
+  const { currentPatient, activeChild, updateCurrentPatient } = usePatient()
+  const [consultChildId, setConsultChildId] = useState<string | undefined>(undefined)
+  const [growth, setGrowth] = useState({ weight: '', height: '' })
+
+  // The measurement belongs to the child this appointment was booked for,
+  // not whichever child happens to be active when the form is submitted.
+  useEffect(() => {
+    setConsultChildId(getConsultations().find((c) => c.id === consultId)?.childId)
+  }, [consultId])
+  const targetChild = currentPatient?.children.find((c) => c.id === consultChildId) ?? activeChild
 
   const [form, setForm] = useState({
     chiefComplaint: '',
@@ -22,7 +35,10 @@ export default function PreConsultFormPage() {
   const [files, setFiles] = useState<{ name: string; size: string }[]>([])
   const [submitted, setSubmitted] = useState(false)
 
-  const isValid = form.chiefComplaint.trim().length > 0 && form.duration.trim().length > 0
+  const gw = growth.weight.trim() ? Number(growth.weight) : undefined
+  const gh = growth.height.trim() ? Number(growth.height) : undefined
+  const growthOk = (gw === undefined || (gw > 0.5 && gw <= 200)) && (gh === undefined || (gh >= 25 && gh <= 230))
+  const isValid = form.chiefComplaint.trim().length > 0 && form.duration.trim().length > 0 && growthOk
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files
@@ -50,6 +66,24 @@ export default function PreConsultFormPage() {
         submittedAt: new Date().toISOString(),
       }))
     } catch {}
+
+    if (targetChild && currentPatient && (gw !== undefined || gh !== undefined)) {
+      const d = new Date()
+      const m: Measurement = {
+        id: 'm-' + Date.now(),
+        date: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'),
+        ageYears: targetChild.age,
+        weightKg: gw,
+        heightCm: gh,
+        source: 'pre-consult',
+      }
+      updateCurrentPatient({
+        ...currentPatient,
+        children: currentPatient.children.map((c) =>
+          c.id === targetChild.id ? { ...c, measurements: [...(c.measurements ?? []), m] } : c
+        ),
+      })
+    }
 
     setSubmitted(true)
     setTimeout(() => {
@@ -174,6 +208,36 @@ export default function PreConsultFormPage() {
                 placeholder="Anything else the doctor should know? e.g., Child is anxious during video calls..."
                 className="w-full rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
               />
+            </div>
+
+            {/* Growth measurements */}
+            <div>
+              <label className="mb-1.5 block text-sm font-medium text-foreground">
+                Growth Measurements{targetChild ? ' for ' + targetChild.name : ''}
+              </label>
+              <p className="mb-2 text-xs text-muted-foreground">
+                Optional. Today's weight and height help the doctor track growth over time.
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                <input
+                  type="number"
+                  min={0}
+                  step={0.1}
+                  value={growth.weight}
+                  onChange={(e) => setGrowth({ ...growth, weight: e.target.value })}
+                  placeholder="Weight (kg)"
+                  className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+                <input
+                  type="number"
+                  min={0}
+                  step={0.1}
+                  value={growth.height}
+                  onChange={(e) => setGrowth({ ...growth, height: e.target.value })}
+                  placeholder="Height (cm)"
+                  className="h-11 w-full rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
             </div>
 
             {/* File Upload */}
