@@ -24,6 +24,75 @@ export interface DoctorProfile {
   hashtags?: string[]         // display tags, e.g. ['#EpilepsyCare', '#ParentFriendly'] (store WITHOUT requiring the # — include the # in the string for simplicity)
   catchMeAt?: string          // non-contact location line, e.g. 'Aster CMI, Bangalore' (informational only; NOT a contact method)
   availability: WeeklySlot[]
+  /** Absent on seeded doctors, which are treated as approved. */
+  verification?: DoctorVerification
+}
+
+export type VerificationStatus = 'pending_review' | 'changes_requested' | 'approved' | 'rejected'
+
+export type CredentialType =
+  | 'degree_certificate'
+  | 'subspeciality_proof'
+  | 'government_id'
+  | 'hospital_affiliation'
+  | 'profile_photo'
+
+export interface DoctorCredentialDoc {
+  type: CredentialType
+  fileName: string
+}
+
+export interface DoctorNotice {
+  id: string
+  createdAt: string // ISO
+  kind: 'info' | 'action' | 'success' | 'error'
+  title: string
+  body: string
+  channels: ('in_app' | 'whatsapp' | 'email')[]
+  read: boolean
+}
+
+export interface DoctorVerification {
+  status: VerificationStatus
+  email: string
+  phone?: string
+  contactVia: 'email' | 'phone'
+  registrationNumber: string
+  council: string
+  registrationYear: number
+  documents: DoctorCredentialDoc[]
+  termsAcceptedAt: string
+  dataConsentAcceptedAt: string
+  submittedAt: string
+  reviewedAt?: string
+  reviewNote?: string
+  notices: DoctorNotice[]
+}
+
+/** Seeded doctors have no verification record and count as approved. */
+export function isDoctorApproved(doc: DoctorProfile): boolean {
+  return !doc.verification || doc.verification.status === 'approved'
+}
+
+export const MEDICAL_COUNCILS = [
+  'National Medical Commission (NMC)',
+  'Andhra Pradesh Medical Council',
+  'Delhi Medical Council',
+  'Karnataka Medical Council',
+  'Kerala Medical Council',
+  'Maharashtra Medical Council',
+  'Tamil Nadu Medical Council',
+  'Telangana State Medical Council',
+  'West Bengal Medical Council',
+  'Other State Medical Council',
+]
+
+export const CREDENTIAL_LABELS: Record<CredentialType, string> = {
+  degree_certificate: 'Degree certificate (MBBS / MD / DNB)',
+  subspeciality_proof: 'Subspeciality qualification proof',
+  government_id: 'Government ID proof',
+  hospital_affiliation: 'Hospital affiliation letter',
+  profile_photo: 'Profile photo',
 }
 
 export interface WeeklySlot {
@@ -344,6 +413,12 @@ export function getDoctors(): DoctorProfile[] {
 export function addDoctor(doctor: DoctorProfile) {
   const doctors = getDoctors()
   doctors.push(doctor)
+  try { localStorage.setItem(DOCTORS_KEY, JSON.stringify(doctors)) } catch {}
+  return doctors
+}
+
+export function saveDoctor(doctor: DoctorProfile) {
+  const doctors = getDoctors().map((d) => (d.id === doctor.id ? doctor : d))
   try { localStorage.setItem(DOCTORS_KEY, JSON.stringify(doctors)) } catch {}
   return doctors
 }

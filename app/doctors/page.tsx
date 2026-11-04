@@ -3,7 +3,7 @@
 import { useState, useEffect, Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { ArrowLeft, Filter, MapPin, Search, Stethoscope } from 'lucide-react'
-import { getDoctors, getPlatformFee, initializeMockData, SUBSPECIALITIES, type DoctorProfile } from '@/lib/mock-data'
+import { isDoctorApproved, getDoctors, getPlatformFee, initializeMockData, SUBSPECIALITIES, type DoctorProfile } from '@/lib/mock-data'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
 import { HeartRating } from '@/components/ui/heart-rating'
@@ -67,7 +67,7 @@ function DoctorsListContent() {
     setDoctors(getDoctors())
   }, [])
 
-  const filtered = doctors.filter((doc) => {
+  const filtered = doctors.filter(isDoctorApproved).filter((doc) => {
     const matchCity = selectedCity === 'All Locations' || doc.city === selectedCity
     const matchSpec = !filterSubspeciality || doc.subspeciality === filterSubspeciality
     const matchSearch = !searchQuery.trim() ||

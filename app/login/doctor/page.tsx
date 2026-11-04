@@ -4,6 +4,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ArrowLeft, Stethoscope } from 'lucide-react'
 import { useDoctor } from '@/lib/doctor-context'
+import { isDoctorApproved } from '@/lib/mock-data'
+import { STATUS_LABEL } from '@/lib/doctor-verification'
 
 export default function DoctorLoginPage() {
   const router = useRouter()
@@ -14,7 +16,7 @@ export default function DoctorLoginPage() {
     const doc = doctors.find((d) => d.id === selectedId)
     if (doc) {
       setCurrentDoctor(doc)
-      router.push('/doctor/dashboard')
+      router.push(isDoctorApproved(doc) ? '/doctor/dashboard' : '/doctor/waiting-room')
     }
   }
 
@@ -50,7 +52,7 @@ export default function DoctorLoginPage() {
               <option value="">Choose a doctor profile...</option>
               {doctors.map((doc) => (
                 <option key={doc.id} value={doc.id}>
-                  {doc.name} — {doc.subspeciality}
+                  {doc.verification && !isDoctorApproved(doc) ? `[${STATUS_LABEL[doc.verification.status]}] ` : ''}{doc.name} — {doc.subspeciality}
                 </option>
               ))}
             </select>
@@ -66,9 +68,9 @@ export default function DoctorLoginPage() {
 
           <div className="mt-4 border-t border-border pt-4 text-center">
             <p className="text-sm text-muted-foreground">
-              New doctor?{' '}
+              New to the platform?{' '}
               <a href="/doctor/onboarding" className="text-primary hover:underline">
-                Onboard here
+                Register as a doctor
               </a>
             </p>
           </div>

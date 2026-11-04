@@ -6,6 +6,7 @@ import {
   type Consultation,
   getDoctors,
   addDoctor,
+  saveDoctor,
   getConsultations,
   updateConsultation,
   initializeMockData,
@@ -21,6 +22,8 @@ interface DoctorContextValue {
   // Doctor registry
   doctors: DoctorProfile[]
   onboardDoctor: (doctor: DoctorProfile) => void
+  /** Persist changes to a doctor (verification, notices, resubmission). Keeps currentDoctor in sync. */
+  updateDoctor: (doctor: DoctorProfile) => void
 
   // Consultations
   consultations: Consultation[]
@@ -76,6 +79,11 @@ export function DoctorProvider({ children }: { children: ReactNode }) {
     setCurrentDoctor(doctor)
   }
 
+  const updateDoctor = (doctor: DoctorProfile) => {
+    setDoctors(saveDoctor(doctor))
+    if (currentDoctor?.id === doctor.id) setCurrentDoctorState(doctor)
+  }
+
   const getUpcoming = () => {
     if (!currentDoctor) return []
     return consultations
@@ -127,6 +135,7 @@ export function DoctorProvider({ children }: { children: ReactNode }) {
         logout,
         doctors,
         onboardDoctor,
+        updateDoctor,
         consultations,
         getUpcoming,
         getCompleted,
