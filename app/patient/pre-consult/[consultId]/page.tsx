@@ -9,6 +9,7 @@ import { usePatient } from '@/lib/patient-context'
 import { ConsultAccessGate } from '@/components/patient/consult-access-gate'
 import { getConsultations } from '@/lib/mock-data'
 import type { Measurement } from '@/lib/patient-data'
+import { getAgeYears } from '@/lib/child-age'
 
 function PreConsultFormContent() {
   const router = useRouter()
@@ -73,7 +74,7 @@ function PreConsultFormContent() {
       const m: Measurement = {
         id: 'm-' + Date.now(),
         date: d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'),
-        ageYears: targetChild.age,
+        ageYears: getAgeYears(targetChild),
         weightKg: gw,
         heightCm: gh,
         source: 'pre-consult',

@@ -17,6 +17,7 @@ export interface Child {
   id: string
   name: string
   age: number
+  dob?: string          // ISO date of birth (yyyy-mm-dd); when set, age is derived from it
   sex: 'Male' | 'Female' | 'Other'
   measurements?: Measurement[]
 }

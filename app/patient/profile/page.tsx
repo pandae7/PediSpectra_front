@@ -2,36 +2,24 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { Mail, MapPin, Phone, Plus, Trash2, User } from 'lucide-react'
+import { Mail, MapPin, Pencil, Phone, Plus, User } from 'lucide-react'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
+import { ChildAvatar } from '@/components/layout/child-avatar'
 import { usePatient } from '@/lib/patient-context'
-import type { Child } from '@/lib/patient-data'
-
-let childIdCounter = 0
-function newChildId() {
-  childIdCounter += 1
-  return `child-draft-${Date.now()}-${childIdCounter}`
-}
+import { formatAge } from '@/lib/child-age'
 
 export default function PatientProfilePage() {
   const router = useRouter()
-  const { currentPatient, isLoading, updateCurrentPatient } = usePatient()
-  const [children, setChildren] = useState<Child[]>([])
-  const [dirty, setDirty] = useState(false)
+  const { currentPatient, activeChild, setActiveChild, isLoading, updateCurrentPatient } = usePatient()
+  const [editingCity, setEditingCity] = useState(false)
+  const [cityDraft, setCityDraft] = useState('')
 
   useEffect(() => {
     if (!isLoading && !currentPatient) {
       router.replace('/login/patient')
     }
   }, [isLoading, currentPatient, router])
-
-  useEffect(() => {
-    if (currentPatient) {
-      setChildren(currentPatient.children)
-      setDirty(false)
-    }
-  }, [currentPatient])
 
   if (isLoading || !currentPatient) {
     return (
@@ -44,35 +32,14 @@ export default function PatientProfilePage() {
     )
   }
 
-  const handleAddChild = () => {
-    setChildren((prev) => [...prev, { id: newChildId(), name: '', age: 0, sex: 'Male' }])
-    setDirty(true)
+  const startCityEdit = () => {
+    setCityDraft(currentPatient.city ?? '')
+    setEditingCity(true)
   }
 
-  const handleRemoveChild = (id: string) => {
-    setChildren((prev) => (prev.length > 1 ? prev.filter((c) => c.id !== id) : prev))
-    setDirty(true)
-  }
-
-  const handleChildChange = (id: string, field: keyof Child, value: string) => {
-    setChildren((prev) =>
-      prev.map((c) =>
-        c.id === id ? { ...c, [field]: field === 'age' ? Number(value) : value } : c
-      )
-    )
-    setDirty(true)
-  }
-
-  const isValid =
-    children.length > 0 && children.every((c) => c.name.trim().length > 0 && c.age > 0 && c.sex)
-
-  const handleSave = () => {
-    if (!isValid) return
-    updateCurrentPatient({
-      ...currentPatient,
-      children: children.map((c) => ({ ...c, name: c.name.trim() })),
-    })
-    setDirty(false)
+  const saveCity = () => {
+    updateCurrentPatient({ ...currentPatient, city: cityDraft.trim() || undefined })
+    setEditingCity(false)
   }
 
   return (
@@ -105,10 +72,47 @@ export default function PatientProfilePage() {
                 <span className="text-foreground">{currentPatient.email || 'Not provided'}</span>
               </div>
               <div className="flex items-center gap-2">
-                <MapPin className="h-4 w-4 text-muted-foreground" />
-                <span className="text-foreground">{currentPatient.city || 'Not provided'}</span>
+                <MapPin className="h-4 w-4 shrink-0 text-muted-foreground" />
+                {editingCity ? (
+                  <div className="flex flex-1 items-center gap-2">
+                    <input
+                      type="text"
+                      value={cityDraft}
+                      onChange={(e) => setCityDraft(e.target.value)}
+                      maxLength={80}
+                      placeholder="City"
+                      className="h-9 flex-1 rounded-lg border border-border bg-background px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                    />
+                    <button
+                      onClick={saveCity}
+                      className="h-9 rounded-lg bg-primary px-3 text-sm font-medium text-primary-foreground"
+                    >
+                      Save
+                    </button>
+                    <button
+                      onClick={() => setEditingCity(false)}
+                      className="h-9 rounded-lg border border-border px-3 text-sm text-muted-foreground hover:text-foreground"
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                ) : (
+                  <>
+                    <span className="text-foreground">{currentPatient.city || 'Not provided'}</span>
+                    <button
+                      onClick={startCityEdit}
+                      aria-label="Edit city"
+                      className="ml-1 rounded p-1 text-muted-foreground hover:text-foreground"
+                    >
+                      <Pencil className="h-3.5 w-3.5" />
+                    </button>
+                  </>
+                )}
               </div>
             </div>
+            <p className="mt-4 text-xs text-muted-foreground">
+              Name, phone and email can&apos;t be changed here yet.
+            </p>
           </div>
 
           {/* Children */}
@@ -116,71 +120,58 @@ export default function PatientProfilePage() {
             <h2 className="mb-4 text-lg font-semibold text-foreground">Children</h2>
 
             <div className="space-y-3">
-              {children.map((child, idx) => (
-                <div key={child.id} className="rounded-lg border border-border bg-background p-3">
-                  <div className="mb-2 flex items-center justify-between">
-                    <span className="text-xs font-medium text-muted-foreground">Child {idx + 1}</span>
-                    {children.length > 1 && (
-                      <button
-                        onClick={() => handleRemoveChild(child.id)}
-                        className="flex items-center gap-1 text-xs text-muted-foreground hover:text-destructive"
-                        aria-label={`Remove child ${idx + 1}`}
+              {currentPatient.children.map((child) => {
+                const isActive = child.id === activeChild?.id
+                return (
+                  <div
+                    key={child.id}
+                    className="flex items-center justify-between gap-3 rounded-xl border border-border bg-background p-3"
+                  >
+                    <div className="flex items-center gap-3">
+                      <ChildAvatar child={child} siblings={currentPatient.children} size="lg" />
+                      <div>
+                        <p className="font-medium text-foreground">
+                          {child.name}
+                          {isActive && (
+                            <span className="ml-2 rounded-full bg-primary/15 px-2 py-0.5 text-[11px] font-medium text-primary">
+                              Viewing
+                            </span>
+                          )}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {formatAge(child)} &middot; {child.sex}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {!isActive && (
+                        <button
+                          onClick={() => setActiveChild(child.id)}
+                          className="rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
+                        >
+                          Switch to
+                        </button>
+                      )}
+                      <a
+                        href={'/patient/children/' + child.id}
+                        className="flex items-center gap-1 rounded-lg border border-border px-3 py-1.5 text-xs font-medium text-foreground hover:bg-accent"
                       >
-                        <Trash2 className="h-3.5 w-3.5" />
-                        Remove
-                      </button>
-                    )}
-                  </div>
-                  <div className="space-y-2">
-                    <input
-                      type="text"
-                      value={child.name}
-                      onChange={(e) => handleChildChange(child.id, 'name', e.target.value)}
-                      placeholder="Child's name"
-                      className="h-10 w-full rounded-lg border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                    />
-                    <div className="grid grid-cols-2 gap-2">
-                      <input
-                        type="number"
-                        min={0}
-                        max={25}
-                        value={child.age || ''}
-                        onChange={(e) => handleChildChange(child.id, 'age', e.target.value)}
-                        placeholder="Age"
-                        className="h-10 w-full rounded-lg border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                      />
-                      <select
-                        value={child.sex}
-                        onChange={(e) => handleChildChange(child.id, 'sex', e.target.value)}
-                        className="h-10 w-full rounded-lg border border-border bg-card px-3 text-sm text-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
-                      >
-                        <option value="Male">Male</option>
-                        <option value="Female">Female</option>
-                        <option value="Other">Other</option>
-                      </select>
+                        <Pencil className="h-3 w-3" />
+                        Edit
+                      </a>
                     </div>
                   </div>
-                </div>
-              ))}
+                )
+              })}
             </div>
 
-            <button
-              onClick={handleAddChild}
-              className="mt-3 flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
+            <a
+              href="/patient/children/new"
+              className="mt-4 flex items-center gap-1.5 text-sm font-medium text-primary hover:underline"
             >
               <Plus className="h-4 w-4" />
-              Add another child
-            </button>
-
-            {dirty && (
-              <button
-                onClick={handleSave}
-                disabled={!isValid}
-                className="mt-5 h-11 w-full rounded-lg bg-primary font-medium text-primary-foreground transition-opacity hover:opacity-90 disabled:opacity-50"
-              >
-                Save Changes
-              </button>
-            )}
+              Add a child
+            </a>
           </div>
         </div>
       </div>

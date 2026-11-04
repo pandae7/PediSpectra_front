@@ -7,6 +7,7 @@ import { Footer } from '@/components/layout/footer'
 import { GrowthCharts } from '@/components/growth/growth-charts'
 import { usePatient } from '@/lib/patient-context'
 import type { Measurement } from '@/lib/patient-data'
+import { getAgeYears, formatAge } from '@/lib/child-age'
 
 function todayISO() {
   const d = new Date()
@@ -58,7 +59,7 @@ export default function GrowthChartPage() {
   const child = activeChild
   const measurements = child.measurements ?? []
 
-  const ageYears = ageInput.trim() ? Number(ageInput) : child.age
+  const ageYears = ageInput.trim() ? Number(ageInput) : getAgeYears(child, date ? new Date(date + 'T00:00:00') : new Date())
   const w = weight.trim() ? Number(weight) : undefined
   const h = height.trim() ? Number(height) : undefined
   const valid =
@@ -104,7 +105,7 @@ export default function GrowthChartPage() {
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         <h1 className="text-2xl font-bold text-foreground">Growth chart: {child.name}</h1>
         <p className="mt-1 text-sm text-muted-foreground">
-          {child.age} yrs &middot; {child.sex}
+          {formatAge(child)} &middot; {child.sex}
         </p>
 
         <div className="mt-4 flex items-start gap-2 rounded-lg border border-border bg-muted/40 p-3 text-xs text-muted-foreground">
@@ -138,7 +139,7 @@ export default function GrowthChartPage() {
                 step={0.1}
                 value={ageInput}
                 onChange={(e) => setAgeInput(e.target.value)}
-                placeholder={String(child.age)}
+                placeholder={String(Math.round(getAgeYears(child) * 10) / 10)}
                 className={inputCls}
               />
             </div>

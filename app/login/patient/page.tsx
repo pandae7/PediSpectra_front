@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, Heart, Mail, Phone, Plus, Trash2 } from 'lucide-react'
 import { usePatient } from '@/lib/patient-context'
 import { findPatientByIdentifier, type Child, type Measurement } from '@/lib/patient-data'
+import { getAgeYears, isValidDob } from '@/lib/child-age'
 import { cn } from '@/lib/utils'
 
 type IdentifierType = 'phone' | 'email'
@@ -17,7 +18,7 @@ function newChildId() {
 }
 
 function emptyChild(): Child {
-  return { id: newChildId(), name: '', age: 0, sex: 'Male' }
+  return { id: newChildId(), name: '', age: 0, dob: '', sex: 'Male' }
 }
 
 function PatientLoginContent() {
@@ -59,7 +60,7 @@ function PatientLoginContent() {
   const isSignupValid =
     parentName.trim().length > 0 &&
     children.length > 0 &&
-    children.every((c) => c.name.trim().length > 0 && c.age > 0 && c.sex) &&
+    children.every((c) => c.name.trim().length > 0 && isValidDob(c.dob ?? '') && c.sex) &&
     children.every((c) => baselineOk(baseline[c.id]))
 
   const handleContinue = () => {
@@ -116,9 +117,9 @@ function PatientLoginContent() {
         const hv = b?.height.trim() ? Number(b.height) : undefined
         const measurements: Measurement[] =
           wv !== undefined || hv !== undefined
-            ? [{ id: 'm-' + Date.now() + '-' + c.id, date: localDateISO(), ageYears: c.age, weightKg: wv, heightCm: hv, source: 'signup' }]
+            ? [{ id: 'm-' + Date.now() + '-' + c.id, date: localDateISO(), ageYears: getAgeYears({ age: c.age, dob: c.dob }), weightKg: wv, heightCm: hv, source: 'signup' }]
             : []
-        return { ...c, name: c.name.trim(), measurements }
+        return { ...c, name: c.name.trim(), age: Math.floor(getAgeYears({ age: c.age, dob: c.dob })), measurements }
       }),
       ...(identifierType === 'phone'
         ? { phone: identifierValue.trim(), email: secondaryValue.trim() || undefined }
@@ -339,12 +340,11 @@ function PatientLoginContent() {
                         />
                         <div className="grid grid-cols-2 gap-2">
                           <input
-                            type="number"
-                            min={0}
-                            max={25}
-                            value={child.age || ''}
-                            onChange={(e) => handleChildChange(child.id, 'age', e.target.value)}
-                            placeholder="Age"
+                            type="date"
+                            max={localDateISO()}
+                            value={child.dob ?? ''}
+                            onChange={(e) => handleChildChange(child.id, 'dob', e.target.value)}
+                            aria-label="Date of birth"
                             className="h-10 w-full rounded-lg border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
                           />
                           <select
