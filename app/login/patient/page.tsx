@@ -4,7 +4,7 @@ import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { ArrowLeft, Heart, Mail, Phone, Plus, Trash2 } from 'lucide-react'
 import { usePatient } from '@/lib/patient-context'
-import { findPatientByIdentifier, type Child } from '@/lib/patient-data'
+import { findPatientByIdentifier, type Child, type Measurement } from '@/lib/patient-data'
 import { cn } from '@/lib/utils'
 
 type IdentifierType = 'phone' | 'email'
@@ -36,6 +36,7 @@ function PatientLoginContent() {
   const [secondaryValue, setSecondaryValue] = useState('')
   const [city, setCity] = useState('')
   const [children, setChildren] = useState<Child[]>([emptyChild()])
+  const [baseline, setBaseline] = useState<Record<string, { weight: string; height: string }>>({})
 
   const isPhoneValid = /^\d{10}$/.test(identifierValue.trim())
   const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(identifierValue.trim())
@@ -43,10 +44,23 @@ function PatientLoginContent() {
 
   const isOtpValid = /^\d{6}$/.test(otp)
 
+  const baselineOk = (b?: { weight: string; height: string }) => {
+    if (!b) return true
+    const wv = b.weight.trim() ? Number(b.weight) : undefined
+    const hv = b.height.trim() ? Number(b.height) : undefined
+    return (wv === undefined || (wv > 0.5 && wv <= 200)) && (hv === undefined || (hv >= 25 && hv <= 230))
+  }
+
+  const localDateISO = () => {
+    const d = new Date()
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0')
+  }
+
   const isSignupValid =
     parentName.trim().length > 0 &&
     children.length > 0 &&
-    children.every((c) => c.name.trim().length > 0 && c.age > 0 && c.sex)
+    children.every((c) => c.name.trim().length > 0 && c.age > 0 && c.sex) &&
+    children.every((c) => baselineOk(baseline[c.id]))
 
   const handleContinue = () => {
     if (!isIdentifierValid) return
@@ -82,6 +96,13 @@ function PatientLoginContent() {
     )
   }
 
+  const handleBaselineChange = (id: string, field: 'weight' | 'height', value: string) => {
+    setBaseline((prev) => ({
+      ...prev,
+      [id]: { weight: prev[id]?.weight ?? '', height: prev[id]?.height ?? '', [field]: value },
+    }))
+  }
+
   const handleSignup = () => {
     if (!isSignupValid) return
 
@@ -89,7 +110,16 @@ function PatientLoginContent() {
       identifierType,
       parentName: parentName.trim(),
       city: city.trim() || undefined,
-      children: children.map((c) => ({ ...c, name: c.name.trim() })),
+      children: children.map((c) => {
+        const b = baseline[c.id]
+        const wv = b?.weight.trim() ? Number(b.weight) : undefined
+        const hv = b?.height.trim() ? Number(b.height) : undefined
+        const measurements: Measurement[] =
+          wv !== undefined || hv !== undefined
+            ? [{ id: 'm-' + Date.now() + '-' + c.id, date: localDateISO(), ageYears: c.age, weightKg: wv, heightCm: hv, source: 'signup' }]
+            : []
+        return { ...c, name: c.name.trim(), measurements }
+      }),
       ...(identifierType === 'phone'
         ? { phone: identifierValue.trim(), email: secondaryValue.trim() || undefined }
         : { email: identifierValue.trim(), phone: secondaryValue.trim() || undefined }),
@@ -327,6 +357,27 @@ function PatientLoginContent() {
                             <option value="Other">Other</option>
                           </select>
                         </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <input
+                            type="number"
+                            min={0}
+                            step={0.1}
+                            value={baseline[child.id]?.weight ?? ''}
+                            onChange={(e) => handleBaselineChange(child.id, 'weight', e.target.value)}
+                            placeholder="Weight (kg), optional"
+                            className="h-10 w-full rounded-lg border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                          />
+                          <input
+                            type="number"
+                            min={0}
+                            step={0.1}
+                            value={baseline[child.id]?.height ?? ''}
+                            onChange={(e) => handleBaselineChange(child.id, 'height', e.target.value)}
+                            placeholder="Height (cm), optional"
+                            className="h-10 w-full rounded-lg border border-border bg-card px-3 text-sm text-foreground placeholder:text-muted-foreground focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20"
+                          />
+                        </div>
+                        <p className="text-[11px] text-muted-foreground">Optional. Current weight and height start your child's growth chart.</p>
                       </div>
                     </div>
                   ))}
