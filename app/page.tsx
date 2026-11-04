@@ -69,7 +69,7 @@ const SUBSPECIALITIES = [
 // 6 photos are sourced.
 const BENEFITS = [
   {
-    title: '24/7 Emergency Guidance',
+    title: '24/7 Guidance',
     desc: "Not sure if it's urgent? Reach a pediatrician any time of night for guidance on whether to head to the ER or wait it out.",
     icon: Clock,
     image: '/images/benefit-247-care.jpg',
