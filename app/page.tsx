@@ -675,9 +675,9 @@ export default function LandingPage() {
 
           <div className="mt-12 grid gap-6 sm:grid-cols-3">
             {[
-              { name: 'Dr. Sumithra', role: 'Co-founder & COO', specialty: 'Pediatric Intensivist & Critical Care', image: '/images/team/sumithra.jpg', fit: 'contain' },
-              { name: 'Dr. Tejaswi Chandra', role: 'Co-founder & CEO', specialty: 'Pediatric Pulmonologist', image: '/images/team/teju-chandra.jpg', fit: 'cover' },
-              { name: 'Dr. Shamkiran', role: 'Co-founder & CMO', specialty: 'Pediatric Endocrinologist', image: '/images/team/shamkiran.jpg', fit: 'cover' },
+              { name: 'Dr. Tejaswi Chandra', role: 'Founder & CEO', specialty: 'Pediatric Pulmonologist', image: '/images/team/teju-chandra.jpg', pos: 'object-top' },
+              { name: 'Dr. Shamkiran', role: 'Co-founder & CMO', specialty: 'Pediatric Endocrinologist', image: '/images/team/shamkiran.jpg', pos: 'object-[50%_15%]' },
+              { name: 'Dr. Sumithra', role: 'Co-founder & COO', specialty: 'Pediatric Intensivist & Critical Care', image: '/images/team/sumithra.jpg', pos: 'object-[50%_20%]' },
             ].map((member) => (
               <div
                 key={member.role}
@@ -687,10 +687,7 @@ export default function LandingPage() {
                 <img
                   src={member.image}
                   alt={member.name}
-                  className={
-                    'absolute inset-0 h-full w-full transition-transform duration-500 group-hover:scale-105 ' +
-                    (member.fit === 'contain' ? 'object-contain' : 'object-cover object-top')
-                  }
+                  className={`absolute inset-0 h-full w-full object-cover ${member.pos} transition-transform duration-500 group-hover:scale-105`}
                 />
                 {/* Bottom scrim for text legibility (theme-independent) */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/35 to-transparent" />
