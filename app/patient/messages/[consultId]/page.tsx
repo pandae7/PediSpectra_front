@@ -7,8 +7,9 @@ import { getConsultations, getDoctors, initializeMockData, type Consultation, ty
 import { getMessages, sendMessage, seedDemoMessages, type Message } from '@/lib/messages'
 import { Navbar } from '@/components/layout/navbar'
 import { cn } from '@/lib/utils'
+import { ConsultAccessGate } from '@/components/patient/consult-access-gate'
 
-export default function PatientMessagesPage() {
+function PatientMessagesContent() {
   const params = useParams()
   const consultId = params.consultId as string
   const [messages, setMessages] = useState<Message[]>([])
@@ -139,5 +140,13 @@ export default function PatientMessagesPage() {
         </div>
       </div>
     </div>
+  )
+}
+
+export default function PatientMessagesPage() {
+  return (
+    <ConsultAccessGate>
+      <PatientMessagesContent />
+    </ConsultAccessGate>
   )
 }

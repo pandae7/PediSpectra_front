@@ -5,6 +5,7 @@ import { useParams, useRouter } from 'next/navigation'
 import { ArrowLeft, Calendar, Check, Clock } from 'lucide-react'
 import { getDoctors, getPlatformFee, initializeMockData, type DoctorProfile } from '@/lib/mock-data'
 import { usePatient } from '@/lib/patient-context'
+import { ChildSwitcher } from '@/components/layout/child-switcher'
 import { cn } from '@/lib/utils'
 
 const DAYS_OF_WEEK = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
@@ -114,6 +115,10 @@ function BookingContent() {
               <p className="text-sm text-muted-foreground">
                 {doctor.subspeciality} · ₹{getPlatformFee(doctor.subspeciality)} per consultation
               </p>
+              <div className="mt-2 flex items-center gap-2 text-sm text-muted-foreground">
+                <span>Booking for</span>
+                <ChildSwitcher />
+              </div>
             </div>
           </div>
 

@@ -10,7 +10,7 @@ import { usePatient } from '@/lib/patient-context'
 
 export default function PatientConsultationsPage() {
   const router = useRouter()
-  const { activeChild } = usePatient()
+  const { currentPatient, activeChild, isLoading } = usePatient()
   const [consultations, setConsultations] = useState<Consultation[]>([])
   const [doctors, setDoctors] = useState<DoctorProfile[]>([])
 
@@ -22,7 +22,7 @@ export default function PatientConsultationsPage() {
 
   const childConsultations = activeChild
     ? consultations.filter((c) => c.childId === activeChild.id)
-    : consultations
+    : []
 
   const upcoming = childConsultations
     .filter((c) => c.status === 'upcoming')
@@ -31,6 +31,35 @@ export default function PatientConsultationsPage() {
   const completed = childConsultations
     .filter((c) => c.status === 'completed')
     .sort((a, b) => b.date.localeCompare(a.date))
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar showBack backHref="/" />
+        <div className="flex items-center justify-center py-20">
+          <div className="h-6 w-6 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+        </div>
+      </div>
+    )
+  }
+
+  if (!currentPatient || !activeChild) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar showBack backHref="/" />
+        <div className="mx-auto max-w-md px-4 py-20 text-center">
+          <h1 className="text-xl font-bold text-foreground">My Consultations</h1>
+          <p className="mt-2 text-muted-foreground">Log in to see your child's consultations.</p>
+          <a
+            href="/login/patient?returnTo=/patient/consultations"
+            className="mt-6 inline-block rounded-lg bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground"
+          >
+            Log in
+          </a>
+        </div>
+      </div>
+    )
+  }
 
   const getDoctorName = (doctorId: string) => {
     const doc = doctors.find((d) => d.id === doctorId)
@@ -52,7 +81,7 @@ export default function PatientConsultationsPage() {
           {upcoming.length === 0 ? (
             <div className="rounded-xl border border-border bg-card p-6 text-center">
               <Calendar className="mx-auto h-10 w-10 text-muted-foreground" />
-              <p className="mt-3 font-medium text-foreground">No upcoming consultations</p>
+              <p className="mt-3 font-medium text-foreground">No upcoming consultations for {activeChild.name}</p>
               <p className="mt-1 text-sm text-muted-foreground">
                 Browse doctors and book your first consultation.
               </p>
@@ -133,7 +162,7 @@ export default function PatientConsultationsPage() {
 
           {completed.length === 0 ? (
             <div className="rounded-xl border border-border bg-card p-6 text-center">
-              <p className="text-sm text-muted-foreground">No completed consultations yet.</p>
+              <p className="text-sm text-muted-foreground">No completed consultations yet for {activeChild.name}.</p>
             </div>
           ) : (
             <div className="space-y-3">

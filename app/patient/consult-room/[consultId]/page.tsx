@@ -13,6 +13,7 @@ import {
 } from 'lucide-react'
 import { getConsultations, getDoctors, initializeMockData, type Consultation, type DoctorProfile } from '@/lib/mock-data'
 import { cn } from '@/lib/utils'
+import { ConsultAccessGate } from '@/components/patient/consult-access-gate'
 
 function PatientConsultRoomContent() {
   const router = useRouter()
@@ -257,7 +258,9 @@ function PatientConsultRoomContent() {
 export default function PatientConsultRoomPage() {
   return (
     <Suspense fallback={<div className="flex min-h-screen items-center justify-center bg-background"><p className="text-muted-foreground">Loading...</p></div>}>
-      <PatientConsultRoomContent />
+      <ConsultAccessGate>
+        <PatientConsultRoomContent />
+      </ConsultAccessGate>
     </Suspense>
   )
 }

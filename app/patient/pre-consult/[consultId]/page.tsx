@@ -6,10 +6,11 @@ import { ArrowLeft, CheckCircle, FileText, Upload } from 'lucide-react'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
 import { usePatient } from '@/lib/patient-context'
+import { ConsultAccessGate } from '@/components/patient/consult-access-gate'
 import { getConsultations } from '@/lib/mock-data'
 import type { Measurement } from '@/lib/patient-data'
 
-export default function PreConsultFormPage() {
+function PreConsultFormContent() {
   const router = useRouter()
   const params = useParams()
   const consultId = params.consultId as string
@@ -294,5 +295,13 @@ export default function PreConsultFormPage() {
       </div>
       <Footer />
     </div>
+  )
+}
+
+export default function PreConsultFormPage() {
+  return (
+    <ConsultAccessGate>
+      <PreConsultFormContent />
+    </ConsultAccessGate>
   )
 }

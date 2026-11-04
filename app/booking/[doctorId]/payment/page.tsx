@@ -128,6 +128,10 @@ function PaymentContent() {
                 <span className="text-foreground">{doctor.subspeciality}</span>
               </div>
               <div className="flex justify-between">
+                <span className="text-muted-foreground">Patient</span>
+                <span className="font-medium text-foreground">{activeChild?.name ?? currentPatient.children[0]?.name}</span>
+              </div>
+              <div className="flex justify-between">
                 <span className="text-muted-foreground">Date</span>
                 <span className="text-foreground">{formattedDate}</span>
               </div>

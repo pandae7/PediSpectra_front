@@ -10,6 +10,21 @@ import {
   CURRENT_PATIENT_KEY,
   ACTIVE_CHILD_KEY,
 } from './patient-data'
+import { getConsultations, updateConsultation } from './mock-data'
+
+// Older bookings were saved without a childId. Attach them to the matching child
+// (same parent name and child name) so they do not disappear from every child's view.
+function claimLegacyConsultations(patient: PatientProfile) {
+  try {
+    for (const c of getConsultations()) {
+      if (c.childId || c.patientName !== patient.parentName) continue
+      const child = patient.children.find(
+        (ch) => ch.name.trim().toLowerCase() === c.childName.trim().toLowerCase()
+      )
+      if (child) updateConsultation({ ...c, childId: child.id })
+    }
+  } catch {}
+}
 
 interface PatientContextValue {
   currentPatient: PatientProfile | null
@@ -38,6 +53,7 @@ export function PatientProvider({ children }: { children: ReactNode }) {
         const patient = patients.find((p) => p.id === savedId)
         if (patient) {
           setCurrentPatientState(patient)
+          claimLegacyConsultations(patient)
           const savedChild = localStorage.getItem(ACTIVE_CHILD_KEY)
           const validChild = patient.children.find((ch) => ch.id === savedChild)
           setActiveChildId(validChild ? validChild.id : patient.children[0]?.id ?? null)
@@ -49,6 +65,7 @@ export function PatientProvider({ children }: { children: ReactNode }) {
 
   const login = (patient: PatientProfile) => {
     setCurrentPatientState(patient)
+    claimLegacyConsultations(patient)
     const firstChild = patient.children[0]?.id ?? null
     setActiveChildId(firstChild)
     try {

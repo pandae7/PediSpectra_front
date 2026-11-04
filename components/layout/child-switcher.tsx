@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { usePathname, useRouter } from 'next/navigation'
 import { Baby, ChevronDown, Check } from 'lucide-react'
 import { usePatient } from '@/lib/patient-context'
 import { cn } from '@/lib/utils'
@@ -11,6 +12,8 @@ import { cn } from '@/lib/utils'
 export function ChildSwitcher() {
   const { currentPatient, activeChild, setActiveChild } = usePatient()
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
+  const router = useRouter()
   const ref = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
@@ -51,6 +54,10 @@ export function ChildSwitcher() {
                 key={child.id}
                 onClick={() => {
                   setActiveChild(child.id)
+                  // A consultation page belongs to one child, so leave it when switching.
+                  if (/^\/patient\/(pre-consult|consult-room|post-consult|messages)\//.test(pathname)) {
+                    router.push('/patient/consultations')
+                  }
                   setOpen(false)
                 }}
                 className="flex w-full items-center justify-between gap-2 rounded-lg px-3 py-2.5 text-left text-sm text-foreground transition-colors hover:bg-accent"

@@ -16,8 +16,9 @@ import {
 import { getConsultations, getDoctors, initializeMockData, type Consultation, type DoctorProfile } from '@/lib/mock-data'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
+import { ConsultAccessGate } from '@/components/patient/consult-access-gate'
 
-export default function PatientPostConsultPage() {
+function PatientPostConsultContent() {
   const params = useParams()
   const consultId = params.consultId as string
   const [consult, setConsult] = useState<Consultation | null>(null)
@@ -207,5 +208,13 @@ export default function PatientPostConsultPage() {
       </div>
       <Footer />
     </div>
+  )
+}
+
+export default function PatientPostConsultPage() {
+  return (
+    <ConsultAccessGate>
+      <PatientPostConsultContent />
+    </ConsultAccessGate>
   )
 }
