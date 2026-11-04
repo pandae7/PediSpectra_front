@@ -6,6 +6,7 @@ import { ArrowLeft, Bell, Calendar, Clock, FileText, Video } from 'lucide-react'
 import { getConsultations, getDoctors, initializeMockData, type Consultation, type DoctorProfile } from '@/lib/mock-data'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
+import { ChildContextBar } from '@/components/patient/child-context-bar'
 import { usePatient } from '@/lib/patient-context'
 
 export default function PatientConsultationsPage() {
@@ -69,6 +70,7 @@ export default function PatientConsultationsPage() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar showBack backHref="/" />
+      <ChildContextBar />
 
       <div className="px-4 py-8 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-3xl">

@@ -20,7 +20,7 @@ export function Navbar({ showBack = false, backHref, backLabel = 'Back' }: Navba
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const profileRef = useRef<HTMLDivElement>(null)
-  const { currentPatient, logout } = usePatient()
+  const { currentPatient, activeChild, logout } = usePatient()
 
   // Close profile dropdown on outside click
   useEffect(() => {
@@ -76,6 +76,11 @@ export function Navbar({ showBack = false, backHref, backLabel = 'Back' }: Navba
           <a href="/doctors" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
             Doctors
           </a>
+          {currentPatient && activeChild && (
+            <a href="/patient/home" className="max-w-[9rem] truncate text-sm font-medium text-foreground transition-colors hover:text-primary">
+              {activeChild.name}&apos;s Hub
+            </a>
+          )}
           {currentPatient && (
             <a href="/patient/growth-chart" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
               Growth Chart
@@ -158,6 +163,11 @@ export function Navbar({ showBack = false, backHref, backLabel = 'Back' }: Navba
             <a href="/doctors" className="rounded-lg px-3 py-2 text-sm text-foreground hover:bg-muted">
               Find a Doctor
             </a>
+            {currentPatient && activeChild && (
+              <a href="/patient/home" className="rounded-lg px-3 py-2 text-sm font-medium text-foreground hover:bg-muted">
+                {activeChild.name}&apos;s Hub
+              </a>
+            )}
             {currentPatient && (
               <a href="/patient/growth-chart" className="rounded-lg px-3 py-2 text-sm text-foreground hover:bg-muted">
                 Growth Chart

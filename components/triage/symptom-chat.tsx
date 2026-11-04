@@ -26,6 +26,13 @@ export function SymptomChat() {
     endRef.current?.scrollIntoView({ behavior: 'smooth' })
   }, [messages, open])
 
+  // Lets other pages (e.g. the child hub) open the helper.
+  useEffect(() => {
+    const onOpen = () => setOpen(true)
+    window.addEventListener('open-symptom-chat', onOpen)
+    return () => window.removeEventListener('open-symptom-chat', onOpen)
+  }, [])
+
   const respond = (query: string) => {
     const q = query.trim()
     if (!q) return

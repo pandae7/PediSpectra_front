@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { Info, Plus, Trash2 } from 'lucide-react'
 import { Navbar } from '@/components/layout/navbar'
 import { Footer } from '@/components/layout/footer'
+import { ChildContextBar } from '@/components/patient/child-context-bar'
 import { GrowthCharts } from '@/components/growth/growth-charts'
 import { usePatient } from '@/lib/patient-context'
 import type { Measurement } from '@/lib/patient-data'
@@ -101,6 +102,7 @@ export default function GrowthChartPage() {
   return (
     <div className="min-h-screen bg-background">
       <Navbar showBack backHref="/" />
+      <ChildContextBar />
 
       <div className="mx-auto max-w-4xl px-4 py-8 sm:px-6 lg:px-8">
         <h1 className="text-2xl font-bold text-foreground">Growth chart: {child.name}</h1>
