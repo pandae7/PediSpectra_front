@@ -76,6 +76,11 @@ export function Navbar({ showBack = false, backHref, backLabel = 'Back' }: Navba
           <a href="/doctors" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
             Doctors
           </a>
+          {currentPatient && (
+            <a href="/patient/growth-chart" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
+              Growth Chart
+            </a>
+          )}
           <a href="/patient/consultations" className="text-sm text-muted-foreground transition-colors hover:text-foreground">
             My Consultations
           </a>
@@ -153,6 +158,11 @@ export function Navbar({ showBack = false, backHref, backLabel = 'Back' }: Navba
             <a href="/doctors" className="rounded-lg px-3 py-2 text-sm text-foreground hover:bg-muted">
               Find a Doctor
             </a>
+            {currentPatient && (
+              <a href="/patient/growth-chart" className="rounded-lg px-3 py-2 text-sm text-foreground hover:bg-muted">
+                Growth Chart
+              </a>
+            )}
             <a href="/patient/consultations" className="rounded-lg px-3 py-2 text-sm text-foreground hover:bg-muted">
               My Consultations
             </a>

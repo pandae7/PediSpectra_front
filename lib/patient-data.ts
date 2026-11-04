@@ -3,11 +3,22 @@
  * Mirrors the patterns established in mock-data.ts.
  */
 
+// A single growth measurement for a child (height/weight at a point in time).
+export interface Measurement {
+  id: string
+  date: string          // ISO date (yyyy-mm-dd)
+  ageYears: number      // child's age (years, decimals allowed) at measurement
+  weightKg?: number
+  heightCm?: number
+  source: 'signup' | 'pre-consult' | 'manual'
+}
+
 export interface Child {
   id: string
   name: string
   age: number
   sex: 'Male' | 'Female' | 'Other'
+  measurements?: Measurement[]
 }
 
 export interface PatientProfile {
